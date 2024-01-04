@@ -20,7 +20,7 @@ function repl() {
       process.exit(0);
     }
     
-    getResult(input);
+    console.log(getResult(input));
   }
 }
 
@@ -35,9 +35,7 @@ function getResult(code: string) {
     const env = createGlobalEnvironent();
 
     const program = parser.produceAST(code);
-    const result = evaluate(program, env);
-
-    console.log(result);
+    return evaluate(program, env);
   } catch (err) {
     console.error(err);
   }

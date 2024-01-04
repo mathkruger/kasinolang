@@ -1,6 +1,7 @@
 import {
   AssignmentExpression,
   BinaryExpression,
+  CallExpression,
   Identifier,
   ObjectLiteral,
 } from "../../frontend/ast";
@@ -103,4 +104,18 @@ export function evaluateObjectExpression(
   }
 
   return object;
+}
+
+export function evaluateCallExpression(
+  astNode: CallExpression,
+  env: Environment
+): RuntimeValue {
+  const args = astNode.arguments.map(x => evaluate(x, env));
+  const fn = evaluate(astNode.caller, env);
+  
+  if (fn.type !== "native-function") {
+    throw `Interpreter error: Cannot call value that is not a function: ${JSON.stringify(fn)}`;
+  }
+
+  return fn.callMethod(args, env);
 }

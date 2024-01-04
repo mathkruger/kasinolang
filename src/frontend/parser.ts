@@ -5,10 +5,10 @@ import {
   Identifier,
   MemberExpression,
   NumericLiteral,
-  ObjectLiteral,
   Program,
   Property,
   Statement,
+  StringLiteral,
   VariableDeclaration,
 } from "./ast";
 import { Token, TokenType, tokenize } from "./lexer";
@@ -294,6 +294,12 @@ export default class Parser {
           kind: "NumericLiteral",
           value: parseFloat(this.eat().value),
         } as NumericLiteral;
+      
+      case TokenType.String:
+        return {
+          kind: "StringLiteral",
+          value: this.eat().value
+        } as StringLiteral;
 
       case TokenType.OpenParenthesis: {
         this.eat();

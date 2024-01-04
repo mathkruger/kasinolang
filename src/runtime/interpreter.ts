@@ -1,8 +1,8 @@
 import { Statement, VariableDeclaration } from "../frontend/ast";
 import Environment from "./environment";
-import { evaluateIdentifier, evaluateBinaryExpression, evaluateAssignment, evaluateObjectExpression } from "./evaluate/expressions";
+import { evaluateIdentifier, evaluateBinaryExpression, evaluateAssignment, evaluateObjectExpression, evaluateCallExpression } from "./evaluate/expressions";
 import { evaluateProgram, evaluateVariableDeclaration } from "./evaluate/statements";
-import { NUMBER, RuntimeValue } from "./values";
+import { NUMBER, RuntimeValue, STRING } from "./values";
 
 export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
   switch (astNode.kind) {
@@ -17,11 +17,17 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
     case "NumericLiteral":
       return NUMBER(astNode.value);
 
+    case "StringLiteral":
+      return STRING(astNode.value);
+
     case "Identifier":
       return evaluateIdentifier(astNode, env);
 
     case "ObjectLiteral":
       return evaluateObjectExpression(astNode, env);
+
+    case "CallExpression":
+      return evaluateCallExpression(astNode, env);
 
     case "BinaryExpression":
       return evaluateBinaryExpression(astNode, env);

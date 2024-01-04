@@ -13,6 +13,7 @@ export type NodeType =
   | "Property"
   | "ObjectLiteral"
   | "NumericLiteral"
+  | "StringLiteral"
   | "NullLiteral"
   | "Identifier";
 
@@ -64,6 +65,11 @@ export type NumericLiteral = {
   value: number;
 };
 
+export type StringLiteral = {
+  kind: "StringLiteral";
+  value: string;
+};
+
 export type Property = {
   kind: "Property",
   key: string,
@@ -80,6 +86,7 @@ export type Statement =
   | BinaryExpression
   | Identifier
   | NumericLiteral
+  | StringLiteral
   | VariableDeclaration
   | AssignmentExpression
   | Property

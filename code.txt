@@ -1,10 +1,2 @@
-let bar = 20;
-let foo = {
-  bar,
-  text: {
-    title: 24,
-    content: 55,
-  },
-};
-
-print(bar)
+let text = read("say something:");
+print(text)

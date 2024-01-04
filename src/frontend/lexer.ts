@@ -127,6 +127,16 @@ export function tokenize(sourceCode: string): Token[] {
           }
         } else if (isSkippable(code[0])) {
           code.shift(); 
+        } else if (code[0] === "\"") {
+          let string = "";
+
+          code.shift();
+          while(code[0] !== "\"") {
+            string += code.shift() as string;
+          }
+          code.shift();
+
+          tokens.push(token(string, TokenType.String));
         } else {
           throw `Lexer error: Unrecognized token: ${code[0]}`;
         }
