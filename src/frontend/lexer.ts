@@ -2,9 +2,10 @@ export enum TokenType {
   Let,
   Const,
   Number,
-  Null,
   Identifier,
+  String,
   Equals,
+  Semicolon,
   OpenParenthesis,
   CloseParenthesis,
   BinaryOperator,
@@ -14,7 +15,6 @@ export enum TokenType {
 const RESERVED_KEYWORD: Record<string, TokenType> = {
   "let": TokenType.Let,
   "const": TokenType.Const,
-  "null": TokenType.Null
 };
 
 export interface Token {
@@ -56,6 +56,10 @@ export function tokenize(sourceCode: string): Token[] {
         tokens.push(token(code.shift(), TokenType.Equals));
       break;
 
+      case ";":
+        tokens.push(token(code.shift(), TokenType.Semicolon));
+      break;
+
       case "+":
       case "-":
       case "/":
@@ -89,8 +93,7 @@ export function tokenize(sourceCode: string): Token[] {
         } else if (isSkippable(code[0])) {
           code.shift(); 
         } else {
-          console.error("Unrecognized token:", code[0]);
-          process.exit(1);
+          throw `Lexer error: Unrecognized token: ${code[0]}`;
         }
       break;
     }

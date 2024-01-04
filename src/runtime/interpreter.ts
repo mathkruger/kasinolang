@@ -1,80 +1,33 @@
-import { BinaryExpression, Program, Statement } from "../frontend/ast";
-import { NullValue, NumberValue, RuntimeValue } from "./values";
+import { Statement, VariableDeclaration } from "../frontend/ast";
+import Environment from "./environment";
+import { evaluateIdentifier, evaluateBinaryExpression, evaluateAssignment } from "./evaluate/expressions";
+import { evaluateProgram, evaluateVariableDeclaration } from "./evaluate/statements";
+import { NUMBER, RuntimeValue } from "./values";
 
-function evaluateProgram(program: Program): RuntimeValue {
-  let lastEvaluated: RuntimeValue = { type: "null", value: "null" };
-
-  for (const statement of program.body) {
-    lastEvaluated = evaluate(statement);
-  }
-
-  return lastEvaluated;
-}
-
-function evaluateBinaryExpression(
-  binaryOperation: BinaryExpression
-): RuntimeValue {
-  const left = evaluate(binaryOperation.left);
-  const right = evaluate(binaryOperation.right);
-
-  if (left.type === "number" && right.type === "number") {
-    return evaluateNumericBinaryExpression(left, right, binaryOperation.operator);
-  }
-
-  return { type: "null", value: "null" };
-}
-
-function evaluateNumericBinaryExpression(left: NumberValue, right: NumberValue, operator: string): NumberValue {
-  let value = 0;
-
-  switch (operator) {
-    case "+":
-      value = left.value + right.value;
-    break;
-
-    case "-":
-      value = left.value - right.value;
-    break;
-
-    case "*":
-      value = left.value * right.value;
-    break;
-
-    case "/":
-      if (right.value === 0) {
-        value = left.value >= 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-      } else {
-        value = left.value / right.value;
-      }
-    break;
-
-    default:
-      value = left.value % right.value;
-    break;
-  }
-
-  return { value, type: "number" } as NumberValue;
-}
-
-export function evaluate(astNode: Statement): RuntimeValue {
+export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
   switch (astNode.kind) {
+    // Statements
     case "Program":
-      return evaluateProgram(astNode);
+      return evaluateProgram(astNode, env);
 
+    case "VariableDeclaration":
+      return evaluateVariableDeclaration(astNode, env);
+
+    // Expressions
     case "NumericLiteral":
-      return { value: astNode.value, type: "number" } as NumberValue;
+      return NUMBER(astNode.value);
 
-    case "NullLiteral":
-      return { value: "null" } as NullValue;
+    case "Identifier":
+      return evaluateIdentifier(astNode, env);
 
     case "BinaryExpression":
-      return evaluateBinaryExpression(astNode);
+      return evaluateBinaryExpression(astNode, env);
+    
+    case "AssignmentExpression":
+      return evaluateAssignment(astNode, env);
 
     default:
-      console.error(
-        "This AST has not been implemented yet for interpretation:\n",
-        astNode
-      );
-      process.exit(1);
+      throw `Interpreter error: This AST has not been implemented yet for interpretation:\n${JSON.stringify(astNode)}`;
   }
 }
+

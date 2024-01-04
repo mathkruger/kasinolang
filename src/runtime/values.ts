@@ -1,5 +1,3 @@
-export type ValueType = "null" | "number";
-
 export type NullValue = {
   type: "null",
   value: "null"
@@ -10,4 +8,30 @@ export type NumberValue = {
   value: number
 };
 
-export type RuntimeValue = NullValue | NumberValue;
+export type BooleanValue = {
+  type: "boolean",
+  value: boolean
+}
+
+export type RuntimeValue = NullValue | NumberValue | BooleanValue;
+
+export function NUMBER(number = 0): NumberValue {
+  return {
+    type: "number",
+    value: number
+  }
+}
+
+export function NULL(): NullValue {
+  return {
+    type: "null",
+    value: "null"
+  }
+}
+
+export function BOOLEAN(value: boolean): BooleanValue {
+  return {
+    type: "boolean",
+    value
+  }
+}

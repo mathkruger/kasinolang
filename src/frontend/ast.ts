@@ -1,5 +1,10 @@
 export type NodeType =
+  // Statements
   | "Program"
+  | "VariableDeclaration"
+
+  // Expressions
+  | "AssignmentExpression"
   | "NumericLiteral"
   | "NullLiteral"
   | "Identifier"
@@ -8,6 +13,19 @@ export type NodeType =
 export type Program = {
   kind: "Program";
   body: Statement[];
+};
+
+export type VariableDeclaration = {
+  kind: "VariableDeclaration";
+  constant: boolean;
+  identifier: string;
+  value?: Expression;
+};
+
+export type AssignmentExpression = {
+  kind: "AssignmentExpression";
+  assigne: Expression;
+  value: Expression;
 };
 
 export type BinaryExpression = {
@@ -27,10 +45,11 @@ export type NumericLiteral = {
   value: number;
 };
 
-export type NullLiteral = {
-  kind: "NullLiteral";
-  value: "null";
-};
-
-export type Statement = Program | BinaryExpression | Identifier | NumericLiteral | NullLiteral;
+export type Statement =
+  | Program
+  | BinaryExpression
+  | Identifier
+  | NumericLiteral
+  | VariableDeclaration
+  | AssignmentExpression;
 export type Expression = Statement;
