@@ -5,6 +5,10 @@ export type NodeType =
 
   // Expressions
   | "AssignmentExpression"
+
+  // Literals
+  | "Property"
+  | "ObjectLiteral"
   | "NumericLiteral"
   | "NullLiteral"
   | "Identifier"
@@ -45,11 +49,25 @@ export type NumericLiteral = {
   value: number;
 };
 
+export type Property = {
+  kind: "Property",
+  key: string,
+  value?: Expression
+};
+
+export type ObjectLiteral = {
+  kind: "ObjectLiteral",
+  properties: Property[]
+};
+
 export type Statement =
   | Program
   | BinaryExpression
   | Identifier
   | NumericLiteral
   | VariableDeclaration
-  | AssignmentExpression;
+  | AssignmentExpression
+  | Property
+  | ObjectLiteral;
+  
 export type Expression = Statement;

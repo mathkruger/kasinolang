@@ -6,8 +6,12 @@ export enum TokenType {
   String,
   Equals,
   Semicolon,
-  OpenParenthesis,
-  CloseParenthesis,
+  Colon,
+  Comma,
+  OpenParenthesis, // (
+  CloseParenthesis, // )
+  OpenBrace, // [
+  CloseBrace, // ]
   BinaryOperator,
   EOF
 }
@@ -51,6 +55,14 @@ export function tokenize(sourceCode: string): Token[] {
       case ")":
         tokens.push(token(code.shift(), TokenType.CloseParenthesis));
       break;
+
+      case "{":
+        tokens.push(token(code.shift(), TokenType.OpenBrace));
+      break;
+      
+      case "}":
+        tokens.push(token(code.shift(), TokenType.CloseBrace));
+      break;
       
       case "=":
         tokens.push(token(code.shift(), TokenType.Equals));
@@ -58,6 +70,14 @@ export function tokenize(sourceCode: string): Token[] {
 
       case ";":
         tokens.push(token(code.shift(), TokenType.Semicolon));
+      break;
+
+      case ":":
+        tokens.push(token(code.shift(), TokenType.Colon));
+      break;
+
+      case ",":
+        tokens.push(token(code.shift(), TokenType.Comma));
       break;
 
       case "+":

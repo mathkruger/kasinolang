@@ -1,4 +1,14 @@
-import { RuntimeValue } from "./values";
+import { BOOLEAN, NULL, RuntimeValue } from "./values";
+
+export function createGlobalEnvironent() {
+  const env = new Environment();
+
+  env.declareVariable("true", BOOLEAN(true), true);
+  env.declareVariable("false", BOOLEAN(false), true);
+  env.declareVariable("null", NULL(), true);
+
+  return env;
+}
 
 export default class Environment {
   private parent?: Environment;

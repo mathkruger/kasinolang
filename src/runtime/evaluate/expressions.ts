@@ -2,10 +2,17 @@ import {
   AssignmentExpression,
   BinaryExpression,
   Identifier,
+  ObjectLiteral,
 } from "../../frontend/ast";
 import Environment from "../environment";
 import { evaluate } from "../interpreter";
-import { RuntimeValue, NULL, NumberValue, NUMBER } from "../values";
+import {
+  RuntimeValue,
+  NULL,
+  NumberValue,
+  NUMBER,
+  ObjectValue,
+} from "../values";
 
 export function evaluateBinaryExpression(
   binaryOperation: BinaryExpression,
@@ -81,4 +88,19 @@ export function evaluateAssignment(
   }
 
   return env.assignVariable(node.assigne.symbol, evaluate(node.value, env));
+}
+
+export function evaluateObjectExpression(
+  astNode: ObjectLiteral,
+  env: Environment
+): RuntimeValue {
+  const object: ObjectValue = { type: "object", properties: new Map() };
+
+  for (const { key, value } of astNode.properties) {
+    const runtimeValue =
+      value === undefined ? env.lookupVariable(key) : evaluate(value, env);
+    object.properties.set(key, runtimeValue);
+  }
+
+  return object;
 }

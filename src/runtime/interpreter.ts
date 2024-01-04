@@ -1,6 +1,6 @@
 import { Statement, VariableDeclaration } from "../frontend/ast";
 import Environment from "./environment";
-import { evaluateIdentifier, evaluateBinaryExpression, evaluateAssignment } from "./evaluate/expressions";
+import { evaluateIdentifier, evaluateBinaryExpression, evaluateAssignment, evaluateObjectExpression } from "./evaluate/expressions";
 import { evaluateProgram, evaluateVariableDeclaration } from "./evaluate/statements";
 import { NUMBER, RuntimeValue } from "./values";
 
@@ -19,6 +19,9 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
 
     case "Identifier":
       return evaluateIdentifier(astNode, env);
+
+    case "ObjectLiteral":
+      return evaluateObjectExpression(astNode, env);
 
     case "BinaryExpression":
       return evaluateBinaryExpression(astNode, env);

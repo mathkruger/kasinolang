@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun src/index.ts",
-    "start:debug": "bun --inspect src/index.ts"
+    "start:debug": "bun src/index.ts"
   },
   "devDependencies": {
     "bun-types": "latest"

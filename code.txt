@@ -1,0 +1,8 @@
+let bar = 20;
+let foo = {
+  bar: bar * 2,
+  text: {
+    title: 24,
+    content: 55,
+  },
+};

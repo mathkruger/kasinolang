@@ -3,7 +3,9 @@ import {
   Expression,
   Identifier,
   NumericLiteral,
+  ObjectLiteral,
   Program,
+  Property,
   Statement,
   VariableDeclaration,
 } from "./ast";
@@ -39,7 +41,9 @@ export default class Parser {
     const previous = this.tokens.shift();
 
     if (!previous || previous.type !== type) {
-      throw `Parser error: ${error}\nExpected: ${type}\nActual: ${JSON.stringify(previous)}`;
+      throw `Parser error: ${error}\nExpected: ${type}\nActual: ${JSON.stringify(
+        previous
+      )}`;
     }
 
     return previous;
@@ -77,20 +81,26 @@ export default class Parser {
         kind: "VariableDeclaration",
         identifier,
         constant: false,
-        value: this.parseExpression()
+        value: this.parseExpression(),
       } as VariableDeclaration;
     }
 
-    this.expect(TokenType.Equals, "Expected equals token on variable declaration");
+    this.expect(
+      TokenType.Equals,
+      "Expected equals token on variable declaration"
+    );
 
     const declaration = {
       kind: "VariableDeclaration",
       value: this.parseExpression(),
       constant: isConstant,
-      identifier
+      identifier,
     } as VariableDeclaration;
 
-    this.expect(TokenType.Semicolon, "Expected semicolon on variable declaration");
+    this.expect(
+      TokenType.Semicolon,
+      "Expected semicolon on variable declaration"
+    );
     return declaration;
   }
 
@@ -99,7 +109,7 @@ export default class Parser {
   }
 
   private parseAssignmentExpression(): Expression {
-    const left = this.parseAdditiveExpression();
+    const left = this.parseObjectExpression();
 
     if (this.at().type === TokenType.Equals) {
       this.eat();
@@ -109,6 +119,49 @@ export default class Parser {
     }
 
     return left;
+  }
+
+  private parseObjectExpression(): Expression {
+    if (this.at().type !== TokenType.OpenBrace) {
+      return this.parseAdditiveExpression();
+    }
+
+    this.eat();
+    const properties = new Array<Property>();
+
+    while (this.notEOF() && this.at().type !== TokenType.CloseBrace) {
+      const key = this.expect(
+        TokenType.Identifier,
+        "Object literal key expected"
+      ).value;
+
+      // { key, }
+      if (this.at().type === TokenType.Comma) {
+        this.eat();
+
+        properties.push({ key, kind: "Property" });
+        continue;
+      }
+      // { key }
+      else if (this.at().type === TokenType.CloseBrace) {
+        properties.push({ key, kind: "Property" });
+        continue;
+      }
+      // { key: value }
+      this.expect(TokenType.Colon, "Missing colon on object literal");
+      const value = this.parseExpression();
+
+      properties.push({ key, value, kind: "Property" });
+      if (this.at().type !== TokenType.CloseBrace) {
+        this.expect(
+          TokenType.Comma,
+          "Expected comma or closinng brackets followinng property"
+        );
+      }
+    }
+
+    this.expect(TokenType.CloseBrace, "Object literal missing closing brace.");
+    return { kind: "ObjectLiteral", properties };
   }
 
   private parseAdditiveExpression(): Expression {

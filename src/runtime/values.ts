@@ -13,7 +13,12 @@ export type BooleanValue = {
   value: boolean
 }
 
-export type RuntimeValue = NullValue | NumberValue | BooleanValue;
+export type ObjectValue = {
+  type: "object",
+  properties: Map<string, RuntimeValue>
+};
+
+export type RuntimeValue = NullValue | NumberValue | BooleanValue | ObjectValue;
 
 export function NUMBER(number = 0): NumberValue {
   return {
