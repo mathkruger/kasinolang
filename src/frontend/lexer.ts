@@ -8,10 +8,13 @@ export enum TokenType {
   Semicolon,
   Colon,
   Comma,
+  Dot,
   OpenParenthesis, // (
   CloseParenthesis, // )
-  OpenBrace, // [
-  CloseBrace, // ]
+  OpenBrace, // {
+  CloseBrace, // }
+  OpenBracket, // {
+  CloseBracket, // }
   BinaryOperator,
   EOF
 }
@@ -63,6 +66,14 @@ export function tokenize(sourceCode: string): Token[] {
       case "}":
         tokens.push(token(code.shift(), TokenType.CloseBrace));
       break;
+
+      case "[":
+        tokens.push(token(code.shift(), TokenType.OpenBracket));
+      break;
+      
+      case "]":
+        tokens.push(token(code.shift(), TokenType.CloseBracket));
+      break;
       
       case "=":
         tokens.push(token(code.shift(), TokenType.Equals));
@@ -78,6 +89,10 @@ export function tokenize(sourceCode: string): Token[] {
 
       case ",":
         tokens.push(token(code.shift(), TokenType.Comma));
+      break;
+
+      case ".":
+        tokens.push(token(code.shift(), TokenType.Dot));
       break;
 
       case "+":

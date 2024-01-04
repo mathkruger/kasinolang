@@ -5,14 +5,16 @@ export type NodeType =
 
   // Expressions
   | "AssignmentExpression"
+  | "MemberExpression"
+  | "CallExpression"
+  | "BinaryExpression"
 
   // Literals
   | "Property"
   | "ObjectLiteral"
   | "NumericLiteral"
   | "NullLiteral"
-  | "Identifier"
-  | "BinaryExpression";
+  | "Identifier";
 
 export type Program = {
   kind: "Program";
@@ -37,6 +39,19 @@ export type BinaryExpression = {
   left: Expression;
   right: Expression;
   operator: string;
+};
+
+export type CallExpression = {
+  kind: "CallExpression";
+  arguments: Expression[];
+  caller: Expression;
+};
+
+export type MemberExpression = {
+  kind: "MemberExpression";
+  object: Expression;
+  property: Expression;
+  computed: boolean;
 };
 
 export type Identifier = {
@@ -68,6 +83,8 @@ export type Statement =
   | VariableDeclaration
   | AssignmentExpression
   | Property
-  | ObjectLiteral;
+  | ObjectLiteral
+  | CallExpression
+  | MemberExpression;
   
 export type Expression = Statement;

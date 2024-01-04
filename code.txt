@@ -1,8 +1,10 @@
 let bar = 20;
 let foo = {
-  bar: bar * 2,
+  bar,
   text: {
     title: 24,
     content: 55,
   },
 };
+
+print(bar)
