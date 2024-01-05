@@ -1,3 +1,4 @@
+import { math } from "../lib/math";
 import { printFunction, readFunction, timeFunction } from "../lib/std";
 import { BOOLEAN, NATIVE_FUNCTION, NULL, RuntimeValue } from "./values";
 
@@ -11,6 +12,8 @@ export function createGlobalEnvironent() {
   env.declareVariable("print", NATIVE_FUNCTION(printFunction), true);
   env.declareVariable("read", NATIVE_FUNCTION(readFunction), true);
   env.declareVariable("time", NATIVE_FUNCTION(timeFunction), true);
+
+  env.declareVariable("math", math(), true);
 
   return env;
 }

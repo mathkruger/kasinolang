@@ -92,3 +92,7 @@ export function BOOLEAN(value: boolean): BooleanValue {
 export function NATIVE_FUNCTION(call: FunctionCall): NativeFunctionValue {
   return { callMethod: call, type: "native-function" };
 }
+
+export function OBJECT(properties: Map<string, RuntimeValue>): ObjectValue {
+  return { type: "object", properties };
+}
