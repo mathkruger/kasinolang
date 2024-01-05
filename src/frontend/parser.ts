@@ -6,6 +6,7 @@ import {
   FunctionDeclaration,
   Identifier,
   IfDeclaration,
+  ImportDeclaration,
   MemberExpression,
   NumericLiteral,
   Program,
@@ -70,9 +71,24 @@ export default class Parser {
         return this.parseIfDeclaration();
       case TokenType.While:
         return this.parseWhileDeclaration();
+      case TokenType.Import:
+        return this.parseImportDeclaration();
       default:
         return this.parseExpression();
     }
+  }
+
+  private parseImportDeclaration(): Statement {
+    this.eat();
+
+    const path = this.expect(TokenType.String, "The import path should be a string").value;
+
+    const result: ImportDeclaration = {
+      kind: "ImportDeclaration",
+      path
+    };
+
+    return result;
   }
 
   private parseWhileDeclaration(): Statement {

@@ -12,6 +12,7 @@ import {
 import {
   evaluateFunctionDeclaration,
   evaluateIfDeclaration,
+  evaluateImportDeclaration,
   evaluateProgram,
   evaluateVariableDeclaration,
   evaluateWhileDeclaration,
@@ -35,6 +36,9 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
 
     case "WhileDeclaration":
       return evaluateWhileDeclaration(astNode, env);
+
+    case "ImportDeclaration":
+      return evaluateImportDeclaration(astNode, env);
 
     // Expressions
     case "NumericLiteral":

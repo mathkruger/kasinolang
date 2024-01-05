@@ -50,6 +50,11 @@ export type WhileDeclaration = {
   body: Statement[];
 }
 
+export type ImportDeclaration = {
+  kind: "ImportDeclaration",
+  path: string;
+}
+
 export type AssignmentExpression = {
   kind: "AssignmentExpression";
   assigne: Expression;
@@ -118,6 +123,7 @@ export type Statement =
   | FunctionDeclaration
   | IfDeclaration
   | WhileDeclaration
+  | ImportDeclaration
   | AssignmentExpression
   | Property
   | ObjectLiteral

@@ -6,6 +6,7 @@ export enum TokenType {
   If,
   Else,
   While,
+  Import,
   Number,
   Identifier,
   String,
@@ -31,7 +32,8 @@ const RESERVED_KEYWORD: Record<string, TokenType> = {
   "anon": TokenType.Anon,
   "if": TokenType.If,
   "else": TokenType.Else,
-  "while": TokenType.While
+  "while": TokenType.While,
+  "import": TokenType.Import,
 };
 
 export interface Token {

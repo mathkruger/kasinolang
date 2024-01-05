@@ -1,7 +1,9 @@
-import { FunctionDeclaration, IfDeclaration, Program, Statement, VariableDeclaration, WhileDeclaration } from "../../frontend/ast";
+import { FunctionDeclaration, IfDeclaration, ImportDeclaration, Program, Statement, VariableDeclaration, WhileDeclaration } from "../../frontend/ast";
+import Parser from "../../frontend/parser";
 import Environment from "../environment";
 import { evaluate } from "../interpreter";
 import { RuntimeValue, NULL, FunctionValue, BooleanValue } from "../values";
+import { readFileSync } from 'fs'
 
 export function evaluateProgram(
   program: Program,
@@ -76,6 +78,16 @@ export function evaluateWhileDeclaration(
     expression = evaluate(declaration.expression, env);
   }
   return lastEvaluated;
+}
+
+export function evaluateImportDeclaration(
+  declaration: ImportDeclaration,
+  env: Environment
+): RuntimeValue {
+  const file = readFileSync(declaration.path).toString();
+  const parser = new Parser();
+  const program = parser.produceAST(file);
+  return evaluate(program, env);
 }
 
 function evaluateBlock(statements: Statement[], env: Environment) {

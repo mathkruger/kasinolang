@@ -1,6 +1,4 @@
-let count = 1;
+import "functions.txt"
 
-while count <= 10 {
-  print(math.power(count, 2))
-  count = count + 1
-}
+const addition = add(2, 2);
+print(addition)
