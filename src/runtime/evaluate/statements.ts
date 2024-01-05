@@ -1,4 +1,4 @@
-import { FunctionDeclaration, Program, VariableDeclaration } from "../../frontend/ast";
+import { FunctionDeclaration, IfDeclaration, Program, Statement, VariableDeclaration } from "../../frontend/ast";
 import Environment from "../environment";
 import { evaluate } from "../interpreter";
 import { RuntimeValue, NULL, FunctionValue } from "../values";
@@ -37,5 +37,36 @@ export function evaluateFunctionDeclaration(
   };
 
   return env.declareVariable(declaration.name, fn, true);
+}
+
+export function evaluateIfDeclaration(
+  declaration: IfDeclaration,
+  env: Environment
+): RuntimeValue {
+  const expression = evaluate(declaration.expression, env);
+
+  if (expression.type !== "boolean") {
+    throw `Interpreter error: if condition must be a boolean!`;
+  }
+
+  if (expression.value === true) {
+    return evaluateBlock(declaration.thenStatement, env);
+  }
+
+  if (declaration.elseStatement.length === 0) {
+    return NULL();
+  }
+
+  return evaluateBlock(declaration.elseStatement, env);
+}
+
+function evaluateBlock(statements: Statement[], env: Environment) {
+  let last: RuntimeValue = NULL();
+    
+  statements.forEach(statement => {
+    last = evaluate(statement, env);
+  });
+
+  return last;
 }
 
