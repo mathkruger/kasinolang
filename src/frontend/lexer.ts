@@ -3,6 +3,8 @@ export enum TokenType {
   Const,
   Function,
   Anon,
+  If,
+  Else,
   Number,
   Identifier,
   String,
@@ -25,7 +27,9 @@ const RESERVED_KEYWORD: Record<string, TokenType> = {
   "let": TokenType.Let,
   "const": TokenType.Const,
   "fn": TokenType.Function,
-  "anon": TokenType.Anon
+  "anon": TokenType.Anon,
+  "if": TokenType.If,
+  "else": TokenType.Else
 };
 
 export interface Token {
@@ -80,7 +84,13 @@ export function tokenize(sourceCode: string): Token[] {
       break;
       
       case "=":
-        tokens.push(token(code.shift(), TokenType.Equals));
+        if (code[1] === "=") {
+          code.shift();
+          code.shift();
+          tokens.push(token("==", TokenType.BinaryOperator));
+        } else {
+          tokens.push(token(code.shift(), TokenType.Equals));
+        }
       break;
 
       case ";":
@@ -104,7 +114,17 @@ export function tokenize(sourceCode: string): Token[] {
       case "/":
       case "*":
       case "%":
-        tokens.push(token(code.shift(), TokenType.BinaryOperator));
+      case ">":
+      case "<":
+      case "&":
+      case "|":
+        if (code[1] !== "=") {
+          tokens.push(token(code.shift(), TokenType.BinaryOperator));
+        } else {
+          const operator = code.shift() as string;
+          const equals = code.shift() as string;
+          tokens.push(token(operator + equals, TokenType.BinaryOperator));
+        }
       break;
       
       default:

@@ -16,6 +16,8 @@ import {
   NUMBER,
   ObjectValue,
   AnonymousFunctionValue,
+  BooleanValue,
+  BOOLEAN,
 } from "../values";
 
 export function evaluateBinaryExpression(
@@ -25,7 +27,7 @@ export function evaluateBinaryExpression(
   const left = evaluate(binaryOperation.left, env);
   const right = evaluate(binaryOperation.right, env);
 
-  if (left.type === "number" && right.type === "number") {
+  if ((left.type === "number" || left.type === "boolean") && (right.type === "number" || right.type === "boolean")) {
     return evaluateNumericBinaryExpression(
       left,
       right,
@@ -37,40 +39,86 @@ export function evaluateBinaryExpression(
 }
 
 function evaluateNumericBinaryExpression(
-  left: NumberValue,
-  right: NumberValue,
+  left: NumberValue | BooleanValue,
+  right: NumberValue | BooleanValue,
   operator: string
-): NumberValue {
-  let value = 0;
-
-  switch (operator) {
-    case "+":
-      value = left.value + right.value;
-      break;
-
-    case "-":
-      value = left.value - right.value;
-      break;
-
-    case "*":
-      value = left.value * right.value;
-      break;
-
-    case "/":
-      if (right.value === 0) {
-        value =
-          left.value >= 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-      } else {
-        value = left.value / right.value;
-      }
-      break;
-
-    default:
-      value = left.value % right.value;
-      break;
+): NumberValue | BooleanValue {
+  if (left.type !== right.type) {
+    throw `Interpretor error: Cannot evaluate binary expressions between different types`;
   }
 
-  return NUMBER(value);
+  if (left.type === "number" && right.type === "number") {
+    let value: boolean | number = 0;
+
+    switch (operator) {
+      case "+":
+        value = left.value + right.value;
+        break;
+  
+      case "-":
+        value = left.value - right.value;
+        break;
+  
+      case "*":
+        value = left.value * right.value;
+        break;
+  
+      case "/":
+        if (right.value === 0) {
+          value =
+            left.value >= 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+        } else {
+          value = left.value / right.value;
+        }
+        break;
+  
+      case "%":
+        value = left.value % right.value;
+        break;
+      
+      case "==":
+        value = left.value == right.value;
+        break;
+
+      case ">":
+        value = left.value > right.value;
+        break;
+
+      case "<":
+        value = left.value < right.value;
+        break;
+
+      case ">=":
+        value = left.value >= right.value;
+        break;
+
+      case "<=":
+        value = left.value <= right.value;
+        break;
+      
+      default: 
+        throw `Interpreter error: cannot use ${operator} operator with numbers`;
+    }
+
+    return typeof value === "number" ? NUMBER(value) : BOOLEAN(value);
+  } else {
+    const leftBool = left as BooleanValue;
+    const rightBool = right as BooleanValue;
+
+    switch(operator) {
+      case "==":
+        return BOOLEAN(leftBool.value == rightBool.value);
+
+      case "&":
+        return BOOLEAN(leftBool.value && rightBool.value);
+      
+      case "|":
+        return BOOLEAN(leftBool.value || rightBool.value);
+      
+      default:
+        throw `Interpreter error: canno use ${operator} operator with booleans`;
+    }
+  }
 }
 
 export function evaluateIdentifier(

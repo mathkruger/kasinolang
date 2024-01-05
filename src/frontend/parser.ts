@@ -5,6 +5,7 @@ import {
   Expression,
   FunctionDeclaration,
   Identifier,
+  IfDeclaration,
   MemberExpression,
   NumericLiteral,
   Program,
@@ -64,9 +65,46 @@ export default class Parser {
         return this.parseVariableDeclaration();
       case TokenType.Function:
         return this.parseFunctionDeclaration();
+      case TokenType.If:
+        return this.parseIfDeclaration();
       default:
         return this.parseExpression();
     }
+  }
+
+  private parseIfDeclaration(): Statement {
+    this.eat();
+
+    const expression = this.parseExpression();
+
+    const thenStatement: Statement[] = this.parseStatementBlock(TokenType.OpenBrace, TokenType.CloseBrace);
+    let elseStatement: Statement[] = [];
+
+    if (this.at().type === TokenType.Else) {
+      this.eat();
+      elseStatement = this.parseStatementBlock(TokenType.OpenBrace, TokenType.CloseBrace);
+    }
+
+    const declaration: IfDeclaration = {
+      kind: "IfDeclaration",
+      expression,
+      thenStatement,
+      elseStatement
+    };
+
+    return declaration;
+  }
+
+  private parseStatementBlock(openToken: TokenType, closeToken: TokenType): Statement[] {
+    const statements: Statement[] = [];
+
+    this.expect(openToken, `Open token expected for block`);
+    while(this.notEOF() && this.at().type !== closeToken) {
+      statements.push(this.parseStatement());
+    }
+    this.expect(closeToken, "Close token expected for block");
+
+    return statements;
   }
 
   private parseFunctionDeclaration(): Statement {
@@ -199,7 +237,7 @@ export default class Parser {
 
   private parseObjectExpression(): Expression {
     if (this.at().type !== TokenType.OpenBrace) {
-      return this.parseAdditiveExpression();
+      return this.parseComparisonExpression();
     }
 
     this.eat();
@@ -238,6 +276,31 @@ export default class Parser {
 
     this.expect(TokenType.CloseBrace, "Object literal missing closing brace.");
     return { kind: "ObjectLiteral", properties };
+  }
+
+  private parseComparisonExpression(): Expression {
+    let left = this.parseAdditiveExpression();
+
+    while (
+      this.at().value === ">" ||
+      this.at().value === "<" ||
+      this.at().value === "<=" ||
+      this.at().value === ">=" ||
+      this.at().value === "==" ||
+      this.at().value === "&" ||
+      this.at().value === "|"
+    ) {
+      const operator = this.eat().value;
+      const right = this.parseAdditiveExpression();
+      left = {
+        kind: "BinaryExpression",
+        left,
+        right,
+        operator,
+      } as BinaryExpression;
+    }
+
+    return left;
   }
 
   private parseAdditiveExpression(): Expression {

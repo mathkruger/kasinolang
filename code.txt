@@ -1,16 +1,8 @@
-const x = {
-  foo: 42,
-  operations: {
-    add: {
-      addOne: anon fn (x) {
-        x + 1
-      },
-      addTwo: anon fn (x) {
-        x + 2
-      }
-    }
-  }
-};
+const number = 1 < 2;
+const numberTwo = 1 >= 1;
 
-print(x.operations.add.addOne(2))
-print(x.operations.add.addTwo(1))
+const or = number | numberTwo;
+const and = number & numberTwo;
+
+print(number, numberTwo)
+print(or, and)

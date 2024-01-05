@@ -37,6 +37,13 @@ export type FunctionDeclaration = {
   body: Statement[]
 };
 
+export type IfDeclaration = {
+  kind: "IfDeclaration";
+  expression: Expression;
+  thenStatement: Statement[];
+  elseStatement: Statement[];
+}
+
 export type AssignmentExpression = {
   kind: "AssignmentExpression";
   assigne: Expression;
@@ -103,6 +110,7 @@ export type Statement =
   | StringLiteral
   | VariableDeclaration
   | FunctionDeclaration
+  | IfDeclaration
   | AssignmentExpression
   | Property
   | ObjectLiteral
