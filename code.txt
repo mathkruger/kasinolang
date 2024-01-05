@@ -1,2 +1,13 @@
-let text = read("say something:");
-print(text)
+fn makeAdder(offset) {
+  fn add(x, y) {
+    x + y + offset
+  }
+
+  add
+}
+
+const plainAdder = makeAdder(0);
+print("2 + 2 = ", plainAdder(2, 2))
+
+const plusTwo = makeAdder(2);
+print("2 + 2 + 2 = ", plusTwo(2, 2))

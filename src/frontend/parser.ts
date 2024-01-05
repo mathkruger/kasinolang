@@ -2,6 +2,7 @@ import {
   BinaryExpression,
   CallExpression,
   Expression,
+  FunctionDeclaration,
   Identifier,
   MemberExpression,
   NumericLiteral,
@@ -60,9 +61,46 @@ export default class Parser {
       case TokenType.Let:
       case TokenType.Const:
         return this.parseVariableDeclaration();
+      case TokenType.Function:
+        return this.parseFunctionDeclaration();
       default:
         return this.parseExpression();
     }
+  }
+
+  private parseFunctionDeclaration(): Statement {
+    this.eat();
+
+    const name = this.expect(
+      TokenType.Identifier,
+      "Expected a function name folowing fn keyword"
+    ).value;
+
+    const args = this.parseArguments();
+    const parameters: string[] = [];
+    for (const arg of args) {
+      if (arg.kind !== "Identifier") {
+        throw "Parser error: Inside function declaration expected parameters to be of type string."
+      }
+
+      parameters.push(arg.symbol);
+    }
+
+    this.expect(TokenType.OpenBrace, "Expecetd function body following declaration");
+
+    const body: Statement[] = [];
+
+    while(this.notEOF() && this.at().type !== TokenType.CloseBrace) {
+      body.push(this.parseStatement());
+    }
+
+    this.expect(TokenType.CloseBrace, "Closing brace expected inside function declaration");
+    return {
+      kind: "FunctionDeclaration",
+      body,
+      name,
+      parameters
+    } as FunctionDeclaration;
   }
 
   private parseVariableDeclaration(): Statement {
@@ -235,14 +273,17 @@ export default class Parser {
         ? []
         : this.parseArgumentsList();
 
-    this.expect(TokenType.CloseParenthesis, "Missing closing parenthesis inside arguments list");
+    this.expect(
+      TokenType.CloseParenthesis,
+      "Missing closing parenthesis inside arguments list"
+    );
     return args;
   }
 
   private parseArgumentsList(): Expression[] {
     const args = [this.parseAssignmentExpression()];
-    
-    while(this.at().type === TokenType.Comma && this.eat()) {
+
+    while (this.at().type === TokenType.Comma && this.eat()) {
       args.push(this.parseAssignmentExpression());
     }
 
@@ -252,7 +293,10 @@ export default class Parser {
   private parseMemberExpression(): Expression {
     let object = this.parsePrimaryExpression();
 
-    while(this.at().type === TokenType.Dot || this.at().type === TokenType.OpenBracket) {
+    while (
+      this.at().type === TokenType.Dot ||
+      this.at().type === TokenType.OpenBracket
+    ) {
       const operator = this.eat();
       let property: Expression;
       let computed: boolean;
@@ -267,15 +311,18 @@ export default class Parser {
       } else {
         computed = true;
         property = this.parseExpression();
-        
-        this.expect(TokenType.CloseBracket, "Missing closing bracked in computed value.");
+
+        this.expect(
+          TokenType.CloseBracket,
+          "Missing closing bracked in computed value."
+        );
       }
 
       object = {
         kind: "MemberExpression",
         object,
         property,
-        computed
+        computed,
       } as MemberExpression;
     }
 
@@ -294,11 +341,11 @@ export default class Parser {
           kind: "NumericLiteral",
           value: parseFloat(this.eat().value),
         } as NumericLiteral;
-      
+
       case TokenType.String:
         return {
           kind: "StringLiteral",
-          value: this.eat().value
+          value: this.eat().value,
         } as StringLiteral;
 
       case TokenType.OpenParenthesis: {

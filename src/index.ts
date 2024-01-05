@@ -12,6 +12,8 @@ if (filePath === undefined) {
 
 function repl() {
   console.log("\n Kasino Repl 0.1");
+  
+  const env = createGlobalEnvironent();
 
   while(true) {
     const input = prompt("> ");
@@ -20,20 +22,21 @@ function repl() {
       process.exit(0);
     }
     
-    console.log(getResult(input));
+    const result = getResult(input, env);
+    console.log(result);
   }
 }
 
 async function run(filePath: string) {
   const file = await Bun.file(filePath).text();
-  getResult(file);
+  const env = createGlobalEnvironent();
+
+  getResult(file, env);
 }
 
-function getResult(code: string) {
+function getResult(code: string, env: Environment) {
   try {
     const parser = new Parser();
-    const env = createGlobalEnvironent();
-
     const program = parser.produceAST(code);
     return evaluate(program, env);
   } catch (err) {

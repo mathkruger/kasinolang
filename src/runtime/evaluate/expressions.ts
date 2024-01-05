@@ -13,6 +13,7 @@ import {
   NumberValue,
   NUMBER,
   ObjectValue,
+  FunctionValue,
 } from "../values";
 
 export function evaluateBinaryExpression(
@@ -113,9 +114,29 @@ export function evaluateCallExpression(
   const args = astNode.arguments.map(x => evaluate(x, env));
   const fn = evaluate(astNode.caller, env);
   
-  if (fn.type !== "native-function") {
-    throw `Interpreter error: Cannot call value that is not a function: ${JSON.stringify(fn)}`;
+  if (fn.type === "native-function") {
+    return fn.callMethod(args, env);
   }
 
-  return fn.callMethod(args, env);
+  if (fn.type === "function") {
+    const scope = new Environment(fn.declarationEnvironments);
+
+    if (fn.parameters.length !== args.length) {
+      throw `Interpreter error: ${fn.name} function expects ${fn.parameters.length} parameters, received ${args.length}`;
+    }
+    
+    fn.parameters.forEach((param, index) => {
+      scope.declareVariable(param, args[index], false);
+    });
+
+    let result: RuntimeValue = NULL();
+
+    for (const x of fn.body) {
+      result = evaluate(x, scope);
+    };
+
+    return result;
+  }
+
+  throw `Interpreter error: Cannot call value that is not a function: ${JSON.stringify(fn)}`;
 }

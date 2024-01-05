@@ -2,6 +2,7 @@ export type NodeType =
   // Statements
   | "Program"
   | "VariableDeclaration"
+  | "FunctionDeclaration"
 
   // Expressions
   | "AssignmentExpression"
@@ -27,6 +28,13 @@ export type VariableDeclaration = {
   constant: boolean;
   identifier: string;
   value?: Expression;
+};
+
+export type FunctionDeclaration = {
+  kind: "FunctionDeclaration";
+  parameters: string[];
+  name: string;
+  body: Statement[]
 };
 
 export type AssignmentExpression = {
@@ -88,6 +96,7 @@ export type Statement =
   | NumericLiteral
   | StringLiteral
   | VariableDeclaration
+  | FunctionDeclaration
   | AssignmentExpression
   | Property
   | ObjectLiteral

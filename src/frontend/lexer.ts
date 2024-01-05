@@ -1,6 +1,7 @@
 export enum TokenType {
   Let,
   Const,
+  Function,
   Number,
   Identifier,
   String,
@@ -13,8 +14,8 @@ export enum TokenType {
   CloseParenthesis, // )
   OpenBrace, // {
   CloseBrace, // }
-  OpenBracket, // {
-  CloseBracket, // }
+  OpenBracket, // [
+  CloseBracket, // ]
   BinaryOperator,
   EOF
 }
@@ -22,6 +23,7 @@ export enum TokenType {
 const RESERVED_KEYWORD: Record<string, TokenType> = {
   "let": TokenType.Let,
   "const": TokenType.Const,
+  "fn": TokenType.Function
 };
 
 export interface Token {
