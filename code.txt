@@ -1,13 +1,16 @@
-fn makeAdder(offset) {
-  fn add(x, y) {
-    x + y + offset
+const x = {
+  foo: 42,
+  operations: {
+    add: {
+      addOne: anon fn (x) {
+        x + 1
+      },
+      addTwo: anon fn (x) {
+        x + 2
+      }
+    }
   }
+};
 
-  add
-}
-
-const plainAdder = makeAdder(0);
-print("2 + 2 = ", plainAdder(2, 2))
-
-const plusTwo = makeAdder(2);
-print("2 + 2 + 2 = ", plusTwo(2, 2))
+print(x.operations.add.addOne(2))
+print(x.operations.add.addTwo(1))

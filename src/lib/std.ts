@@ -30,6 +30,11 @@ function getPrintText(arg: RuntimeValue, scope: Environment) {
     case "native-function":
       textToPrint = JSON.stringify(arg.callMethod);
     break;
+
+    case "function":
+    case "anonymous-function":
+      textToPrint = JSON.stringify(arg);
+    break;
   }
 
   return textToPrint;

@@ -1,6 +1,6 @@
 import { Statement, VariableDeclaration } from "../frontend/ast";
 import Environment from "./environment";
-import { evaluateIdentifier, evaluateBinaryExpression, evaluateAssignment, evaluateObjectExpression, evaluateCallExpression } from "./evaluate/expressions";
+import { evaluateIdentifier, evaluateBinaryExpression, evaluateAssignment, evaluateObjectExpression, evaluateCallExpression, evaluateAnonymousFunctionExpression, evaluateMemberExpression } from "./evaluate/expressions";
 import { evaluateFunctionDeclaration, evaluateProgram, evaluateVariableDeclaration } from "./evaluate/statements";
 import { NUMBER, RuntimeValue, STRING } from "./values";
 
@@ -32,11 +32,17 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
     case "CallExpression":
       return evaluateCallExpression(astNode, env);
 
+    case "MemberExpression":
+      return evaluateMemberExpression(astNode, env);
+
     case "BinaryExpression":
       return evaluateBinaryExpression(astNode, env);
     
     case "AssignmentExpression":
       return evaluateAssignment(astNode, env);
+
+    case "AnonymousFunctionExpression":
+      return evaluateAnonymousFunctionExpression(astNode, env);
 
     default:
       throw `Interpreter error: This AST has not been implemented yet for interpretation:\n${JSON.stringify(astNode)}`;

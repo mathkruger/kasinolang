@@ -44,6 +44,13 @@ export type FunctionValue = {
   body: Statement[];
 };
 
+export type AnonymousFunctionValue = {
+  type: "anonymous-function";
+  parameters: string[];
+  declarationEnvironments: Environment;
+  body: Statement[];
+};
+
 export type RuntimeValue =
   | NullValue
   | NumberValue
@@ -51,6 +58,7 @@ export type RuntimeValue =
   | ObjectValue
   | NativeFunctionValue
   | FunctionValue
+  | AnonymousFunctionValue
   | StringValue;
 
 export function NUMBER(number = 0): NumberValue {

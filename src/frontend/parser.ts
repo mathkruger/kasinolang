@@ -1,4 +1,5 @@
 import {
+  AnonymousFunctionExpression,
   BinaryExpression,
   CallExpression,
   Expression,
@@ -144,8 +145,43 @@ export default class Parser {
     return declaration;
   }
 
+  // Expressions
   private parseExpression(): Expression {
-    return this.parseAssignmentExpression();
+    return this.parseAnonymousFunctionExpression();
+  }
+
+  private parseAnonymousFunctionExpression(): Expression {
+    if (this.at().type !== TokenType.Anon) {
+      return this.parseAssignmentExpression();
+    }
+    
+    this.eat();
+    this.expect(TokenType.Function, "fn keyword expected for an anonymous function");
+
+    const args = this.parseArguments();
+    const parameters: string[] = [];
+    for (const arg of args) {
+      if (arg.kind !== "Identifier") {
+        throw "Parser error: Inside function declaration expected parameters to be of type string."
+      }
+
+      parameters.push(arg.symbol);
+    }
+
+    this.expect(TokenType.OpenBrace, "Expecetd function body following declaration");
+
+    const body: Statement[] = [];
+
+    while(this.notEOF() && this.at().type !== TokenType.CloseBrace) {
+      body.push(this.parseStatement());
+    }
+
+    this.expect(TokenType.CloseBrace, "Closing brace expected inside function declaration");
+    return {
+      kind: "AnonymousFunctionExpression",
+      body,
+      parameters
+    } as AnonymousFunctionExpression;
   }
 
   private parseAssignmentExpression(): Expression {

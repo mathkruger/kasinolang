@@ -2,6 +2,7 @@ export enum TokenType {
   Let,
   Const,
   Function,
+  Anon,
   Number,
   Identifier,
   String,
@@ -23,7 +24,8 @@ export enum TokenType {
 const RESERVED_KEYWORD: Record<string, TokenType> = {
   "let": TokenType.Let,
   "const": TokenType.Const,
-  "fn": TokenType.Function
+  "fn": TokenType.Function,
+  "anon": TokenType.Anon
 };
 
 export interface Token {

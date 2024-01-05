@@ -59,8 +59,14 @@ export type CallExpression = {
 export type MemberExpression = {
   kind: "MemberExpression";
   object: Expression;
-  property: Expression;
+  property: Identifier;
   computed: boolean;
+};
+
+export type AnonymousFunctionExpression = {
+  kind: "AnonymousFunctionExpression";
+  parameters: string[];
+  body: Statement[]
 };
 
 export type Identifier = {
@@ -101,6 +107,7 @@ export type Statement =
   | Property
   | ObjectLiteral
   | CallExpression
-  | MemberExpression;
+  | MemberExpression
+  | AnonymousFunctionExpression;
   
 export type Expression = Statement;

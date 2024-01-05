@@ -1,8 +1,10 @@
 import {
+  AnonymousFunctionExpression,
   AssignmentExpression,
   BinaryExpression,
   CallExpression,
   Identifier,
+  MemberExpression,
   ObjectLiteral,
 } from "../../frontend/ast";
 import Environment from "../environment";
@@ -13,7 +15,7 @@ import {
   NumberValue,
   NUMBER,
   ObjectValue,
-  FunctionValue,
+  AnonymousFunctionValue,
 } from "../values";
 
 export function evaluateBinaryExpression(
@@ -107,6 +109,24 @@ export function evaluateObjectExpression(
   return object;
 }
 
+export function evaluateMemberExpression(
+  member: MemberExpression,
+  env: Environment
+): RuntimeValue {
+  const objectValue = evaluate(member.object, env);
+  const propertySymbol = member.property.symbol;
+
+  if (objectValue.type !== "object") {
+    throw `Interpreter error: Cannot get member from a non-object!`;
+  }
+
+  if (!objectValue.properties.has(propertySymbol)) {
+    throw `Interpreter error: property ${propertySymbol} does not exists!`;
+  }
+
+  return objectValue.properties.get(propertySymbol) as RuntimeValue;
+}
+
 export function evaluateCallExpression(
   astNode: CallExpression,
   env: Environment
@@ -118,11 +138,11 @@ export function evaluateCallExpression(
     return fn.callMethod(args, env);
   }
 
-  if (fn.type === "function") {
+  if (fn.type === "function" || fn.type === "anonymous-function") {
     const scope = new Environment(fn.declarationEnvironments);
 
     if (fn.parameters.length !== args.length) {
-      throw `Interpreter error: ${fn.name} function expects ${fn.parameters.length} parameters, received ${args.length}`;
+      throw `Interpreter error: ${fn.type === "function" ? fn.name : "anonymous"} function expects ${fn.parameters.length} parameters, received ${args.length}`;
     }
     
     fn.parameters.forEach((param, index) => {
@@ -139,4 +159,18 @@ export function evaluateCallExpression(
   }
 
   throw `Interpreter error: Cannot call value that is not a function: ${JSON.stringify(fn)}`;
+}
+
+export function evaluateAnonymousFunctionExpression(
+  astNode: AnonymousFunctionExpression,
+  env: Environment
+): RuntimeValue {
+  const fn: AnonymousFunctionValue = {
+    type: "anonymous-function",
+    parameters: astNode.parameters,
+    declarationEnvironments: env,
+    body: astNode.body
+  };
+
+  return fn;
 }
