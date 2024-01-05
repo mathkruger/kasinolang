@@ -5,6 +5,7 @@ export enum TokenType {
   Anon,
   If,
   Else,
+  While,
   Number,
   Identifier,
   String,
@@ -29,7 +30,8 @@ const RESERVED_KEYWORD: Record<string, TokenType> = {
   "fn": TokenType.Function,
   "anon": TokenType.Anon,
   "if": TokenType.If,
-  "else": TokenType.Else
+  "else": TokenType.Else,
+  "while": TokenType.While
 };
 
 export interface Token {

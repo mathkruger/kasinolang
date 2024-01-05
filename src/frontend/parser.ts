@@ -13,6 +13,7 @@ import {
   Statement,
   StringLiteral,
   VariableDeclaration,
+  WhileDeclaration,
 } from "./ast";
 import { Token, TokenType, tokenize } from "./lexer";
 
@@ -67,9 +68,26 @@ export default class Parser {
         return this.parseFunctionDeclaration();
       case TokenType.If:
         return this.parseIfDeclaration();
+      case TokenType.While:
+        return this.parseWhileDeclaration();
       default:
         return this.parseExpression();
     }
+  }
+
+  private parseWhileDeclaration(): Statement {
+    this.eat();
+
+    const expression = this.parseExpression();
+    const body = this.parseStatementBlock(TokenType.OpenBrace, TokenType.CloseBrace);
+
+    const declaration: WhileDeclaration = {
+      kind: "WhileDeclaration",
+      expression,
+      body
+    };
+
+    return declaration;
   }
 
   private parseIfDeclaration(): Statement {

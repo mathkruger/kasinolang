@@ -1,15 +1,6 @@
-const first = read("type a number");
-const second = read("type another number");
+let count = 1;
 
-if first > second {
-  print("first is bigger than second")
-} else {
-  if first < second {
-    print("first is lesser than second")
-  } else {
-    print("the numbers are equal")
-  }
+while count <= 10 {
+  print(math.power(count, 2))
+  count = count + 1
 }
-
-const result = math.power(5, 2);
-print(result)

@@ -1,7 +1,7 @@
-import { FunctionDeclaration, IfDeclaration, Program, Statement, VariableDeclaration } from "../../frontend/ast";
+import { FunctionDeclaration, IfDeclaration, Program, Statement, VariableDeclaration, WhileDeclaration } from "../../frontend/ast";
 import Environment from "../environment";
 import { evaluate } from "../interpreter";
-import { RuntimeValue, NULL, FunctionValue } from "../values";
+import { RuntimeValue, NULL, FunctionValue, BooleanValue } from "../values";
 
 export function evaluateProgram(
   program: Program,
@@ -58,6 +58,24 @@ export function evaluateIfDeclaration(
   }
 
   return evaluateBlock(declaration.elseStatement, env);
+}
+
+export function evaluateWhileDeclaration(
+  declaration: WhileDeclaration,
+  env: Environment
+): RuntimeValue {
+  let expression = evaluate(declaration.expression, env);
+
+  if (expression.type !== "boolean") {
+    throw `Interpreter error: while condition must be a boolean!`;
+  }
+
+  let lastEvaluated = NULL();
+  while ((expression as BooleanValue).value === true) {
+    lastEvaluated = evaluateBlock(declaration.body, env);
+    expression = evaluate(declaration.expression, env);
+  }
+  return lastEvaluated;
 }
 
 function evaluateBlock(statements: Statement[], env: Environment) {

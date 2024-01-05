@@ -44,6 +44,12 @@ export type IfDeclaration = {
   elseStatement: Statement[];
 }
 
+export type WhileDeclaration = {
+  kind: "WhileDeclaration";
+  expression: Expression;
+  body: Statement[];
+}
+
 export type AssignmentExpression = {
   kind: "AssignmentExpression";
   assigne: Expression;
@@ -111,6 +117,7 @@ export type Statement =
   | VariableDeclaration
   | FunctionDeclaration
   | IfDeclaration
+  | WhileDeclaration
   | AssignmentExpression
   | Property
   | ObjectLiteral

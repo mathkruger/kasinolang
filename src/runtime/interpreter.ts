@@ -1,7 +1,21 @@
-import { Statement, VariableDeclaration } from "../frontend/ast";
+import { Statement } from "../frontend/ast";
 import Environment from "./environment";
-import { evaluateIdentifier, evaluateBinaryExpression, evaluateAssignment, evaluateObjectExpression, evaluateCallExpression, evaluateAnonymousFunctionExpression, evaluateMemberExpression } from "./evaluate/expressions";
-import { evaluateFunctionDeclaration, evaluateIfDeclaration, evaluateProgram, evaluateVariableDeclaration } from "./evaluate/statements";
+import {
+  evaluateIdentifier,
+  evaluateBinaryExpression,
+  evaluateAssignment,
+  evaluateObjectExpression,
+  evaluateCallExpression,
+  evaluateAnonymousFunctionExpression,
+  evaluateMemberExpression,
+} from "./evaluate/expressions";
+import {
+  evaluateFunctionDeclaration,
+  evaluateIfDeclaration,
+  evaluateProgram,
+  evaluateVariableDeclaration,
+  evaluateWhileDeclaration,
+} from "./evaluate/statements";
 import { NUMBER, RuntimeValue, STRING } from "./values";
 
 export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
@@ -18,6 +32,9 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
 
     case "IfDeclaration":
       return evaluateIfDeclaration(astNode, env);
+
+    case "WhileDeclaration":
+      return evaluateWhileDeclaration(astNode, env);
 
     // Expressions
     case "NumericLiteral":
@@ -40,7 +57,7 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
 
     case "BinaryExpression":
       return evaluateBinaryExpression(astNode, env);
-    
+
     case "AssignmentExpression":
       return evaluateAssignment(astNode, env);
 
@@ -48,7 +65,8 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
       return evaluateAnonymousFunctionExpression(astNode, env);
 
     default:
-      throw `Interpreter error: This AST has not been implemented yet for interpretation:\n${JSON.stringify(astNode)}`;
+      throw `Interpreter error: This AST has not been implemented yet for interpretation:\n${JSON.stringify(
+        astNode
+      )}`;
   }
 }
-
