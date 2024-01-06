@@ -84,10 +84,14 @@ export function evaluateImportDeclaration(
   declaration: ImportDeclaration,
   env: Environment
 ): RuntimeValue {
-  const file = readFileSync(declaration.path).toString();
-  const parser = new Parser();
-  const program = parser.produceAST(file);
-  return evaluate(program, env);
+  try {
+    const file = readFileSync(declaration.path).toString();
+    const parser = new Parser();
+    const program = parser.produceAST(file);
+    return evaluate(program, env);
+  } catch (err) {
+    throw `Interpreter error: ${declaration.path} not found`;
+  }
 }
 
 function evaluateBlock(statements: Statement[], env: Environment) {

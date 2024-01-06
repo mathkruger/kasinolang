@@ -1,4 +1,4 @@
-import "functions.txt"
+import "functions.kl"
 
 const addition = add(2, 2);
 print(addition)
