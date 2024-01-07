@@ -15,4 +15,4 @@ const array = [
 ];
 
 const values = array @ 2;
-print(values.values @ 1)
+print(std.len(values.values @ 1))
