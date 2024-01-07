@@ -2,3 +2,5 @@ import "functions.kl"
 
 const root = operations.root(9, 2);
 std.print("sqrt 9 =", root)
+
+std.print(datetime.now())

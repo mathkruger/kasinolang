@@ -1,3 +1,4 @@
+import { datetime } from "../lib/datetime";
 import { math } from "../lib/math";
 import { std } from "../lib/std";
 import { BOOLEAN, NULL, RuntimeValue } from "./values";
@@ -11,6 +12,7 @@ export function createGlobalEnvironent() {
 
   env.declareVariable("std", std(), true);
   env.declareVariable("math", math(), true);
+  env.declareVariable("datetime", datetime(), true);
 
   return env;
 }

@@ -2,6 +2,52 @@ import Environment from "../runtime/environment";
 import { BOOLEAN, NATIVE_FUNCTION, NULL, NUMBER, NativeFunctionValue, OBJECT, ObjectValue, RuntimeValue, STRING } from "../runtime/values";
 
 function printFunction(args: RuntimeValue[], scope: Environment) {
+  function getPrintText(arg: RuntimeValue, scope: Environment) {
+    let textToPrint: string = "";
+  
+    switch(arg.type) {
+      case "boolean":
+      case "null":
+      case "number":
+      case "string":
+        textToPrint = arg.value.toString();
+      break;
+      
+      case "object":
+        textToPrint = printObject(arg.properties, scope);
+      break;
+      
+      case "native-function":
+        textToPrint = JSON.stringify(arg.callMethod);
+      break;
+  
+      case "function":
+      case "anonymous-function":
+        textToPrint = JSON.stringify(arg);
+      break;
+    }
+  
+    return textToPrint;
+  }
+  
+  function printObject(props: Map<string, RuntimeValue>, scope: Environment): string {
+    let text = "{ ";
+  
+    props.forEach((value, key) => {
+      text += `${key}: `;
+      if (value.type === "object") {
+        text += printObject(value.properties, scope);
+      } else {
+        text += getPrintText(value, scope);
+      }
+      text += ", ";
+    });
+  
+    text += "}";
+  
+    return text;
+  }
+
   let textToPrint: string = "";
 
   args.forEach(arg => {
@@ -10,52 +56,6 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
 
   console.log(textToPrint);
   return NULL();
-}
-
-function getPrintText(arg: RuntimeValue, scope: Environment) {
-  let textToPrint: string = "";
-
-  switch(arg.type) {
-    case "boolean":
-    case "null":
-    case "number":
-    case "string":
-      textToPrint = arg.value.toString();
-    break;
-    
-    case "object":
-      textToPrint = printObject(arg.properties, scope);
-    break;
-    
-    case "native-function":
-      textToPrint = JSON.stringify(arg.callMethod);
-    break;
-
-    case "function":
-    case "anonymous-function":
-      textToPrint = JSON.stringify(arg);
-    break;
-  }
-
-  return textToPrint;
-}
-
-function printObject(props: Map<string, RuntimeValue>, scope: Environment): string {
-  let text = "{ ";
-
-  props.forEach((value, key) => {
-    text += `${key}: `;
-    if (value.type === "object") {
-      text += printObject(value.properties, scope);
-    } else {
-      text += getPrintText(value, scope);
-    }
-    text += ", ";
-  });
-
-  text += "}";
-
-  return text;
 }
 
 function readFunction(args: RuntimeValue[], _scope: Environment) {
@@ -80,16 +80,11 @@ function readFunction(args: RuntimeValue[], _scope: Environment) {
   return NUMBER(parseInt(value));
 }
 
-function dateTimeFunction(_args: RuntimeValue[], _scope: Environment) {
-  return STRING(new Date().toISOString());
-}
-
 export function std(): ObjectValue {
   const props = new Map<string, NativeFunctionValue>();
 
   props.set("print", NATIVE_FUNCTION(printFunction));
   props.set("read", NATIVE_FUNCTION(readFunction));
-  props.set("datetime", NATIVE_FUNCTION(dateTimeFunction));
 
   return OBJECT(props);
 }
