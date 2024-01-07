@@ -1,5 +1,6 @@
 import {
   AnonymousFunctionExpression,
+  ArrayLiteral,
   AssignmentExpression,
   BinaryExpression,
   CallExpression,
@@ -18,6 +19,7 @@ import {
   AnonymousFunctionValue,
   BooleanValue,
   BOOLEAN,
+  ArrayValue,
 } from "../values";
 
 export function evaluateBinaryExpression(
@@ -221,4 +223,21 @@ export function evaluateAnonymousFunctionExpression(
   };
 
   return fn;
+}
+
+export function evaluateArray(
+  array: ArrayLiteral,
+  env: Environment
+) {
+  const values: RuntimeValue[] = [];
+  array.values.forEach(v => {
+    values.push(evaluate(v, env));
+  });
+
+  const result: ArrayValue = {
+    type: "array",
+    values
+  };
+
+  return result;
 }

@@ -8,6 +8,7 @@ import {
   evaluateCallExpression,
   evaluateAnonymousFunctionExpression,
   evaluateMemberExpression,
+  evaluateArray,
 } from "./evaluate/expressions";
 import {
   evaluateFunctionDeclaration,
@@ -46,6 +47,9 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
 
     case "StringLiteral":
       return STRING(astNode.value);
+
+    case "ArrayLiteral":
+      return evaluateArray(astNode, env);
 
     case "Identifier":
       return evaluateIdentifier(astNode, env);
