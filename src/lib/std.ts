@@ -1,11 +1,11 @@
 import Environment from "../runtime/environment";
-import { NULL, NUMBER, RuntimeValue, STRING } from "../runtime/values";
+import { BOOLEAN, NATIVE_FUNCTION, NULL, NUMBER, NativeFunctionValue, OBJECT, ObjectValue, RuntimeValue, STRING } from "../runtime/values";
 
-export function printFunction(args: RuntimeValue[], scope: Environment) {
+function printFunction(args: RuntimeValue[], scope: Environment) {
   let textToPrint: string = "";
 
   args.forEach(arg => {
-    textToPrint += getPrintText(arg, scope);
+    textToPrint += " " + getPrintText(arg, scope);
   });
 
   console.log(textToPrint);
@@ -58,7 +58,7 @@ function printObject(props: Map<string, RuntimeValue>, scope: Environment): stri
   return text;
 }
 
-export function readFunction(args: RuntimeValue[], _scope: Environment) {
+function readFunction(args: RuntimeValue[], _scope: Environment) {
   if (args.length > 1 || args[0].type !== "string") {
     throw `Usage: read(string?)`;
   }
@@ -69,6 +69,10 @@ export function readFunction(args: RuntimeValue[], _scope: Environment) {
     return NULL();
   }
 
+  if (value === "true" || value === "false") {
+    return BOOLEAN(value === "true");
+  }
+
   if (isNaN(parseInt(value))) {
     return STRING(value);
   }
@@ -76,6 +80,16 @@ export function readFunction(args: RuntimeValue[], _scope: Environment) {
   return NUMBER(parseInt(value));
 }
 
-export function timeFunction(_args: RuntimeValue[], _scope: Environment) {
+function dateTimeFunction(_args: RuntimeValue[], _scope: Environment) {
   return STRING(new Date().toISOString());
+}
+
+export function std(): ObjectValue {
+  const props = new Map<string, NativeFunctionValue>();
+
+  props.set("print", NATIVE_FUNCTION(printFunction));
+  props.set("read", NATIVE_FUNCTION(readFunction));
+  props.set("datetime", NATIVE_FUNCTION(dateTimeFunction));
+
+  return OBJECT(props);
 }

@@ -1,4 +1,4 @@
 import "functions.kl"
 
-const addition = add(2, 2);
-print(addition)
+const root = operations.root(9, 2);
+std.print("sqrt 9 =", root)
