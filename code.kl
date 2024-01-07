@@ -9,4 +9,4 @@ fn test(num, anotherNum) {
 print("sqrt 9 =", root)
 print(datetime.now())
 
-print(test)
+print(operations)

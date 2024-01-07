@@ -1,68 +1,95 @@
 import Environment from "../runtime/environment";
-import { AnonymousFunctionValue, BOOLEAN, FunctionValue, NATIVE_FUNCTION, NULL, NUMBER, NativeFunctionValue, OBJECT, ObjectValue, RuntimeValue, STRING } from "../runtime/values";
+import {
+  AnonymousFunctionValue,
+  BOOLEAN,
+  FunctionValue,
+  NATIVE_FUNCTION,
+  NULL,
+  NUMBER,
+  NativeFunctionValue,
+  OBJECT,
+  ObjectValue,
+  RuntimeValue,
+  STRING,
+} from "../runtime/values";
 
 function printFunction(args: RuntimeValue[], scope: Environment) {
-  function printFunction(fn: FunctionValue | AnonymousFunctionValue, scope: Environment): string {
+  function printFunctionStatement(
+    fn: FunctionValue | AnonymousFunctionValue | NativeFunctionValue,
+    scope: Environment
+  ): string {
     const params = new Map<string, RuntimeValue>();
-    
+
+    params.set("type", STRING(fn.type));
+
     if (fn.type === "function") {
       params.set("name", STRING(fn.name));
     }
 
-    params.set("params", STRING(fn.parameters.join(", ")));
+    if (fn.type !== "native-function") {
+      params.set("params", STRING(fn.parameters.join(", ")));
+    } else {
+      params.set("internalName", STRING(fn.callMethod.name));
 
-    return printObject(params, scope, fn.type);
+      const bodySplit = fn.callMethod.toString().split("function(");
+      const args = bodySplit[1].split(")")[0];
+      
+      params.set("params", STRING(args));
+    }
+
+    return printObject(params, scope, false);
   }
 
   function getPrintText(arg: RuntimeValue, scope: Environment) {
     let textToPrint: string = "";
-  
-    switch(arg.type) {
+
+    switch (arg.type) {
       case "boolean":
       case "null":
       case "number":
       case "string":
         textToPrint = arg.value.toString();
-      break;
-      
+        break;
+
       case "object":
         textToPrint = printObject(arg.properties, scope);
-      break;
-      
+        break;
+
       case "native-function":
-        textToPrint = JSON.stringify(arg);
-      break;
-  
       case "function":
       case "anonymous-function":
-        textToPrint = printFunction(arg, scope);
-      break;
+        textToPrint = printFunctionStatement(arg, scope);
+        break;
     }
-  
+
     return textToPrint;
   }
-  
-  function printObject(props: Map<string, RuntimeValue>, scope: Environment, objectType = "object"): string {
-    let text = objectType + "[";
-  
+
+  function printObject(
+    props: Map<string, RuntimeValue>,
+    scope: Environment,
+    asString = true
+  ): string | any {
+    let text: any = {};
+
     props.forEach((value, key) => {
-      text += `${key} = `;
       if (value.type === "object") {
-        text += printObject(value.properties, scope);
+        text[key] = printObject(value.properties, scope, false);
       } else {
-        text += getPrintText(value, scope);
+        text[key] = getPrintText(value, scope);
       }
-      text += ", ";
     });
 
-    text += "]"
-  
+    if (asString) {
+      return `object: ${JSON.stringify(text, null, ` `.repeat(4))}`;
+    }
+
     return text;
   }
 
   let textToPrint: string = "";
 
-  args.forEach(arg => {
+  args.forEach((arg) => {
     textToPrint += " " + getPrintText(arg, scope);
   });
 

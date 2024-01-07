@@ -5,6 +5,11 @@ const operations = {
   root: anon fn (num, root) {
     math.nthroot(num, root)
   },
+  info: {
+    title: "This is a library to do mathematics calculus",
+    functionNumber: 2
+  },
+  native: std.print
 };
 
 const print = std.print;
