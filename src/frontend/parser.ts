@@ -1,5 +1,6 @@
 import {
   AnonymousFunctionExpression,
+  ArrayLiteral,
   BinaryExpression,
   CallExpression,
   Expression,
@@ -427,35 +428,19 @@ export default class Parser {
     let object = this.parsePrimaryExpression();
 
     while (
-      this.at().type === TokenType.Dot ||
-      this.at().type === TokenType.OpenBracket
+      this.at().type === TokenType.Dot
     ) {
-      const operator = this.eat();
-      let property: Expression;
-      let computed: boolean;
+      this.eat();
+      const property = this.parsePrimaryExpression();
 
-      if (operator.type === TokenType.Dot) {
-        computed = false;
-        property = this.parsePrimaryExpression();
-
-        if (property.kind !== "Identifier") {
-          throw `Parser error: Cannot use dot operator without right hand side being an identifier.`;
-        }
-      } else {
-        computed = true;
-        property = this.parseExpression();
-
-        this.expect(
-          TokenType.CloseBracket,
-          "Missing closing bracked in computed value."
-        );
+      if (property.kind !== "Identifier") {
+        throw `Parser error: Cannot use dot operator without right hand side being an identifier.`;
       }
 
       object = {
         kind: "MemberExpression",
         object,
         property,
-        computed,
       } as MemberExpression;
     }
 
@@ -486,6 +471,24 @@ export default class Parser {
         const value = this.parseExpression();
         this.expect(TokenType.CloseParenthesis, "Expected closing parenthesis");
         return value;
+      }
+
+      case TokenType.OpenBracket: {
+        this.eat();
+        
+        const values: Statement[] = [];
+        while(this.notEOF() && this.at().type !== TokenType.CloseBracket) {
+          values.push(this.parseStatement());
+
+          if (this.at().type === TokenType.Comma) {
+            this.eat();
+          }
+        }
+        this.expect(TokenType.CloseBracket, "Array definition must have a close brace");
+        return {
+          kind: "ArrayLiteral",
+          values
+        } as ArrayLiteral;
       }
 
       default:

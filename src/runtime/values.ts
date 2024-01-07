@@ -26,6 +26,11 @@ export type ObjectValue = {
   properties: Map<string, RuntimeValue>;
 };
 
+export type ArrayValue = {
+  type: "array";
+  values: RuntimeValue[];
+};
+
 export type FunctionCall = (
   args: RuntimeValue[],
   env: Environment
@@ -56,6 +61,7 @@ export type RuntimeValue =
   | NumberValue
   | BooleanValue
   | ObjectValue
+  | ArrayValue
   | NativeFunctionValue
   | FunctionValue
   | AnonymousFunctionValue

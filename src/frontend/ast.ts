@@ -78,7 +78,6 @@ export type MemberExpression = {
   kind: "MemberExpression";
   object: Expression;
   property: Identifier;
-  computed: boolean;
 };
 
 export type AnonymousFunctionExpression = {
@@ -102,6 +101,11 @@ export type StringLiteral = {
   value: string;
 };
 
+export type ArrayLiteral = {
+  kind: "ArrayLiteral";
+  values: Statement[];
+}
+
 export type Property = {
   kind: "Property",
   key: string,
@@ -119,6 +123,7 @@ export type Statement =
   | Identifier
   | NumericLiteral
   | StringLiteral
+  | ArrayLiteral
   | VariableDeclaration
   | FunctionDeclaration
   | IfDeclaration

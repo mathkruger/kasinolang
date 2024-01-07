@@ -10,3 +10,11 @@ print("sqrt 9 =", root)
 print(datetime.now())
 
 print(operations)
+
+const array = [
+  1,
+  2,
+  3,
+  "hello",
+  1 + 2
+];
