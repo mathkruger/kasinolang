@@ -13,7 +13,7 @@ import {
   STRING,
 } from "../runtime/values";
 
-function printFunction(args: RuntimeValue[], scope: Environment) {
+function print(args: RuntimeValue[], scope: Environment) {
   function printFunctionStatement(
     fn: FunctionValue | AnonymousFunctionValue | NativeFunctionValue,
     scope: Environment,
@@ -34,7 +34,7 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
 
       const bodySplit = fn.callMethod.toString().split("function(");
       const args = bodySplit[1].split(")")[0];
-      
+
       params.set("params", STRING(args));
     }
 
@@ -56,6 +56,10 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
         textToPrint = printObject(arg.properties, scope);
         break;
 
+      case "array":
+        textToPrint = printArray(arg.values, scope);
+        break;
+
       case "native-function":
       case "function":
       case "anonymous-function":
@@ -74,15 +78,25 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
     let text: any = {};
 
     props.forEach((value, key) => {
-      if (value.type === "object") {
-        text[key] = printObject(value.properties, scope, false);
-      } else {
-        text[key] = getPrintText(value, scope, false);
-      }
+      text[key] = getPrintText(value, scope, false);
     });
 
     if (asString) {
       return `object: ${JSON.stringify(text, null, ` `.repeat(4))}`;
+    }
+
+    return text;
+  }
+
+  function printArray(
+    values: RuntimeValue[],
+    scope: Environment,
+    asString = true
+  ): string | any {
+    let text = values.map(x => getPrintText(x, scope, false));
+
+    if (asString) {
+      return `array: ${JSON.stringify(text, null, ` `.repeat(4))}`;
     }
 
     return text;
@@ -98,7 +112,7 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
   return NULL();
 }
 
-function readFunction(args: RuntimeValue[], _scope: Environment) {
+function read(args: RuntimeValue[], _scope: Environment) {
   if (args.length > 1 || args[0].type !== "string") {
     throw `Usage: read(string?)`;
   }
@@ -120,11 +134,25 @@ function readFunction(args: RuntimeValue[], _scope: Environment) {
   return NUMBER(parseInt(value));
 }
 
+function len(args: RuntimeValue[], _scope: Environment) {
+  const object = args[0];
+
+  const value =
+    object.type === "array"
+      ? object.values.length
+      : object.type === "string"
+      ? object.value.length
+      : undefined;
+
+  return NUMBER(value);
+}
+
 export function std(): ObjectValue {
   const props = new Map<string, NativeFunctionValue>();
 
-  props.set("print", NATIVE_FUNCTION(printFunction));
-  props.set("read", NATIVE_FUNCTION(readFunction));
+  props.set("print", NATIVE_FUNCTION(print));
+  props.set("read", NATIVE_FUNCTION(read));
+  props.set("len", NATIVE_FUNCTION(len));
 
   return OBJECT(props);
 }

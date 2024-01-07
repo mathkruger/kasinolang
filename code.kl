@@ -3,14 +3,16 @@ import "functions.kl"
 const array = [
   1,
   2,
-  [
-    "another array",
-    "testing",
-    1,
-    5
-  ],
+  {
+    values: [
+      "another array",
+      "testing",
+      1,
+      5
+    ],
+  }
   1 + 2
 ];
 
-std.print(array @ 3)
-std.print(operations.add)
+const values = array @ 2;
+print(values.values @ 1)
