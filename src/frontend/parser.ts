@@ -1,5 +1,6 @@
 import {
   AnonymousFunctionExpression,
+  ArrayIndexExpression,
   ArrayLiteral,
   BinaryExpression,
   CallExpression,
@@ -377,7 +378,7 @@ export default class Parser {
   }
 
   private parseCallMemberExpression(): Expression {
-    const member = this.parseMemberExpression();
+    const member = this.parseArrayIndexExpression();
 
     if (this.at().type === TokenType.OpenParenthesis) {
       return this.parseCallExpression(member);
@@ -422,6 +423,27 @@ export default class Parser {
     }
 
     return args;
+  }
+
+  private parseArrayIndexExpression(): Expression {
+    let identifier = this.parseMemberExpression();
+
+    while(this.at().type === TokenType.At) {
+      this.eat();
+      const index = this.parseMemberExpression();
+
+      if (index.kind !== "NumericLiteral") {
+        throw `Parser error: Cannot access array index with ${index.kind}. Use a number value for index!`;
+      }
+
+      identifier = {
+        kind: "ArrayIndexExpression",
+        identifier,
+        index
+      } as ArrayIndexExpression;
+    }
+
+    return identifier;
   }
 
   private parseMemberExpression(): Expression {

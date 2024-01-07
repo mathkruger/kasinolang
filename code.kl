@@ -1,20 +1,16 @@
 import "functions.kl"
 
-const root = operations.root(9, 2);
-
-fn test(num, anotherNum) {
-  num + anotherNum
-}
-
-print("sqrt 9 =", root)
-print(datetime.now())
-
-print(operations)
-
 const array = [
   1,
   2,
-  3,
-  "hello",
+  [
+    "another array",
+    "testing",
+    1,
+    5
+  ],
   1 + 2
 ];
+
+std.print(array @ 3)
+std.print(operations.add)

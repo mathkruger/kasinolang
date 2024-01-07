@@ -15,6 +15,7 @@ export enum TokenType {
   Colon,
   Comma,
   Dot,
+  At,
   OpenParenthesis, // (
   CloseParenthesis, // )
   OpenBrace, // {
@@ -111,6 +112,10 @@ export function tokenize(sourceCode: string): Token[] {
 
       case ".":
         tokens.push(token(code.shift(), TokenType.Dot));
+      break;
+
+      case "@":
+        tokens.push(token(code.shift(), TokenType.At));
       break;
 
       case "+":

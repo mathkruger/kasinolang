@@ -1,23 +1,3 @@
-export type NodeType =
-  // Statements
-  | "Program"
-  | "VariableDeclaration"
-  | "FunctionDeclaration"
-
-  // Expressions
-  | "AssignmentExpression"
-  | "MemberExpression"
-  | "CallExpression"
-  | "BinaryExpression"
-
-  // Literals
-  | "Property"
-  | "ObjectLiteral"
-  | "NumericLiteral"
-  | "StringLiteral"
-  | "NullLiteral"
-  | "Identifier";
-
 export type Program = {
   kind: "Program";
   body: Statement[];
@@ -80,6 +60,12 @@ export type MemberExpression = {
   property: Identifier;
 };
 
+export type ArrayIndexExpression = {
+  kind: "ArrayIndexExpression";
+  identifier: Expression;
+  index: Expression;
+};
+
 export type AnonymousFunctionExpression = {
   kind: "AnonymousFunctionExpression";
   parameters: string[];
@@ -134,6 +120,9 @@ export type Statement =
   | ObjectLiteral
   | CallExpression
   | MemberExpression
+  | ArrayIndexExpression
   | AnonymousFunctionExpression;
   
 export type Expression = Statement;
+
+export type NodeType = Statement["kind"];

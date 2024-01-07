@@ -9,6 +9,7 @@ import {
   evaluateAnonymousFunctionExpression,
   evaluateMemberExpression,
   evaluateArray,
+  evaluateArrayIndexExpression,
 } from "./evaluate/expressions";
 import {
   evaluateFunctionDeclaration,
@@ -62,6 +63,9 @@ export function evaluate(astNode: Statement, env: Environment): RuntimeValue {
 
     case "MemberExpression":
       return evaluateMemberExpression(astNode, env);
+
+    case "ArrayIndexExpression":
+      return evaluateArrayIndexExpression(astNode, env);
 
     case "BinaryExpression":
       return evaluateBinaryExpression(astNode, env);

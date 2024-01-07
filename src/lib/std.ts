@@ -16,7 +16,8 @@ import {
 function printFunction(args: RuntimeValue[], scope: Environment) {
   function printFunctionStatement(
     fn: FunctionValue | AnonymousFunctionValue | NativeFunctionValue,
-    scope: Environment
+    scope: Environment,
+    asText = true
   ): string {
     const params = new Map<string, RuntimeValue>();
 
@@ -37,10 +38,10 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
       params.set("params", STRING(args));
     }
 
-    return printObject(params, scope, false);
+    return printObject(params, scope, asText);
   }
 
-  function getPrintText(arg: RuntimeValue, scope: Environment) {
+  function getPrintText(arg: RuntimeValue, scope: Environment, asText = true) {
     let textToPrint: string = "";
 
     switch (arg.type) {
@@ -58,7 +59,7 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
       case "native-function":
       case "function":
       case "anonymous-function":
-        textToPrint = printFunctionStatement(arg, scope);
+        textToPrint = printFunctionStatement(arg, scope, asText);
         break;
     }
 
@@ -76,7 +77,7 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
       if (value.type === "object") {
         text[key] = printObject(value.properties, scope, false);
       } else {
-        text[key] = getPrintText(value, scope);
+        text[key] = getPrintText(value, scope, false);
       }
     });
 

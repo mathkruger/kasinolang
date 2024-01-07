@@ -1,5 +1,6 @@
 import {
   AnonymousFunctionExpression,
+  ArrayIndexExpression,
   ArrayLiteral,
   AssignmentExpression,
   BinaryExpression,
@@ -167,14 +168,36 @@ export function evaluateMemberExpression(
   const propertySymbol = member.property.symbol;
 
   if (objectValue.type !== "object") {
-    throw `Interpreter error: Cannot get member from a non-object!`;
+    throw `Interpreter error: Cannot get member from a non-object identifier!`;
   }
 
   if (!objectValue.properties.has(propertySymbol)) {
-    throw `Interpreter error: property ${propertySymbol} does not exists!`;
+    throw `Interpreter error: property ${propertySymbol} does not exists on ${(member.object as Identifier).symbol}!`;
   }
 
   return objectValue.properties.get(propertySymbol) as RuntimeValue;
+}
+
+export function evaluateArrayIndexExpression(
+  arrayIndex: ArrayIndexExpression,
+  env: Environment
+): RuntimeValue {
+  const identifierValue = evaluate(arrayIndex.identifier, env);
+  const indexValue = evaluate(arrayIndex.index, env);
+
+  if (identifierValue.type !== "array") {
+    throw `Interpreter error: Cannot get index from a non-array identifier!`;
+  }
+
+  if (indexValue.type !== "number") {
+    throw `Interpreter error: Cannot use ${indexValue.type} as a array index, use a number!`;
+  }
+
+  if (identifierValue.values.length < (indexValue.value + 1)) {
+    throw `Interpreter error: index ${indexValue.value} out of bounds!`;
+  }
+
+  return identifierValue.values[indexValue.value];
 }
 
 export function evaluateCallExpression(
