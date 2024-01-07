@@ -1,6 +1,12 @@
 import "functions.kl"
 
 const root = operations.root(9, 2);
-std.print("sqrt 9 =", root)
 
-std.print(datetime.now())
+fn test(num, anotherNum) {
+  num + anotherNum
+}
+
+print("sqrt 9 =", root)
+print(datetime.now())
+
+print(test)

@@ -1,7 +1,19 @@
 import Environment from "../runtime/environment";
-import { BOOLEAN, NATIVE_FUNCTION, NULL, NUMBER, NativeFunctionValue, OBJECT, ObjectValue, RuntimeValue, STRING } from "../runtime/values";
+import { AnonymousFunctionValue, BOOLEAN, FunctionValue, NATIVE_FUNCTION, NULL, NUMBER, NativeFunctionValue, OBJECT, ObjectValue, RuntimeValue, STRING } from "../runtime/values";
 
 function printFunction(args: RuntimeValue[], scope: Environment) {
+  function printFunction(fn: FunctionValue | AnonymousFunctionValue, scope: Environment): string {
+    const params = new Map<string, RuntimeValue>();
+    
+    if (fn.type === "function") {
+      params.set("name", STRING(fn.name));
+    }
+
+    params.set("params", STRING(fn.parameters.join(", ")));
+
+    return printObject(params, scope, fn.type);
+  }
+
   function getPrintText(arg: RuntimeValue, scope: Environment) {
     let textToPrint: string = "";
   
@@ -18,23 +30,23 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
       break;
       
       case "native-function":
-        textToPrint = JSON.stringify(arg.callMethod);
+        textToPrint = JSON.stringify(arg);
       break;
   
       case "function":
       case "anonymous-function":
-        textToPrint = JSON.stringify(arg);
+        textToPrint = printFunction(arg, scope);
       break;
     }
   
     return textToPrint;
   }
   
-  function printObject(props: Map<string, RuntimeValue>, scope: Environment): string {
-    let text = "{ ";
+  function printObject(props: Map<string, RuntimeValue>, scope: Environment, objectType = "object"): string {
+    let text = objectType + "[";
   
     props.forEach((value, key) => {
-      text += `${key}: `;
+      text += `${key} = `;
       if (value.type === "object") {
         text += printObject(value.properties, scope);
       } else {
@@ -42,8 +54,8 @@ function printFunction(args: RuntimeValue[], scope: Environment) {
       }
       text += ", ";
     });
-  
-    text += "}";
+
+    text += "]"
   
     return text;
   }

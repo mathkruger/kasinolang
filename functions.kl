@@ -4,5 +4,7 @@ const operations = {
   },
   root: anon fn (num, root) {
     math.nthroot(num, root)
-  }
+  },
 };
+
+const print = std.print;
