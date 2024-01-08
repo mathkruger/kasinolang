@@ -1,18 +1,28 @@
-import "functions.kl"
-
-const array = [
+const numbers = [
   1,
   2,
-  {
-    values: [
-      "another array",
-      "testing",
-      1,
-      5
-    ],
-  }
-  1 + 2
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10
 ];
 
-const values = array @ 2;
-print(std.len(values.values @ 1))
+fn doubleNumber(number, index) {
+  number * 2
+}
+
+fn printNumbers(number, index) {
+  std.print("Number at index", index, ":", number)
+}
+
+array.foreach(numbers, printNumbers)
+const double = array.map(numbers, doubleNumber);
+array.foreach(double, printNumbers)
+
+std.print(array.at(double, 2))
+
+

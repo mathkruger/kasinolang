@@ -134,25 +134,11 @@ function read(args: RuntimeValue[], _scope: Environment) {
   return NUMBER(parseInt(value));
 }
 
-function len(args: RuntimeValue[], _scope: Environment) {
-  const object = args[0];
-
-  const value =
-    object.type === "array"
-      ? object.values.length
-      : object.type === "string"
-      ? object.value.length
-      : undefined;
-
-  return NUMBER(value);
-}
-
 export function std(): ObjectValue {
   const props = new Map<string, NativeFunctionValue>();
 
   props.set("print", NATIVE_FUNCTION(print));
   props.set("read", NATIVE_FUNCTION(read));
-  props.set("len", NATIVE_FUNCTION(len));
 
   return OBJECT(props);
 }

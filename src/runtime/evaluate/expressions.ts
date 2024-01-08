@@ -21,6 +21,7 @@ import {
   BooleanValue,
   BOOLEAN,
   ArrayValue,
+  FunctionValue,
 } from "../values";
 
 export function evaluateBinaryExpression(
@@ -30,7 +31,10 @@ export function evaluateBinaryExpression(
   const left = evaluate(binaryOperation.left, env);
   const right = evaluate(binaryOperation.right, env);
 
-  if ((left.type === "number" || left.type === "boolean") && (right.type === "number" || right.type === "boolean")) {
+  if (
+    (left.type === "number" || left.type === "boolean") &&
+    (right.type === "number" || right.type === "boolean")
+  ) {
     return evaluateNumericBinaryExpression(
       left,
       right,
@@ -57,28 +61,30 @@ function evaluateNumericBinaryExpression(
       case "+":
         value = left.value + right.value;
         break;
-  
+
       case "-":
         value = left.value - right.value;
         break;
-  
+
       case "*":
         value = left.value * right.value;
         break;
-  
+
       case "/":
         if (right.value === 0) {
           value =
-            left.value >= 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+            left.value >= 0
+              ? Number.POSITIVE_INFINITY
+              : Number.NEGATIVE_INFINITY;
         } else {
           value = left.value / right.value;
         }
         break;
-  
+
       case "%":
         value = left.value % right.value;
         break;
-      
+
       case "==":
         value = left.value == right.value;
         break;
@@ -98,8 +104,8 @@ function evaluateNumericBinaryExpression(
       case "<=":
         value = left.value <= right.value;
         break;
-      
-      default: 
+
+      default:
         throw `Interpreter error: cannot use ${operator} operator with numbers`;
     }
 
@@ -108,16 +114,16 @@ function evaluateNumericBinaryExpression(
     const leftBool = left as BooleanValue;
     const rightBool = right as BooleanValue;
 
-    switch(operator) {
+    switch (operator) {
       case "==":
         return BOOLEAN(leftBool.value == rightBool.value);
 
       case "&":
         return BOOLEAN(leftBool.value && rightBool.value);
-      
+
       case "|":
         return BOOLEAN(leftBool.value || rightBool.value);
-      
+
       default:
         throw `Interpreter error: canno use ${operator} operator with booleans`;
     }
@@ -172,7 +178,9 @@ export function evaluateMemberExpression(
   }
 
   if (!objectValue.properties.has(propertySymbol)) {
-    throw `Interpreter error: property ${propertySymbol} does not exists on ${(member.object as Identifier).symbol}!`;
+    throw `Interpreter error: property ${propertySymbol} does not exists on ${
+      (member.object as Identifier).symbol
+    }!`;
   }
 
   return objectValue.properties.get(propertySymbol) as RuntimeValue;
@@ -193,45 +201,58 @@ export function evaluateArrayIndexExpression(
     throw `Interpreter error: Cannot use ${indexValue.type} as a array index, use a number!`;
   }
 
-  if (identifierValue.values.length < (indexValue.value + 1)) {
+  if (identifierValue.values.length < indexValue.value + 1) {
     throw `Interpreter error: index ${indexValue.value} out of bounds!`;
   }
 
   return identifierValue.values[indexValue.value];
 }
 
+export function runUserDefinedFunction(
+  args: RuntimeValue[],
+  fn: FunctionValue | AnonymousFunctionValue
+) {
+  const scope = new Environment(fn.declarationEnvironments);
+
+  if (fn.parameters.length !== args.length) {
+    throw `Interpreter error: ${
+      fn.type === "function" ? fn.name : "anonymous"
+    } function expects ${fn.parameters.length} parameters, received ${
+      args.length
+    }`;
+  }
+
+  fn.parameters.forEach((param, index) => {
+    scope.declareVariable(param, args[index], false);
+  });
+
+  let result: RuntimeValue = NULL();
+
+  for (const x of fn.body) {
+    result = evaluate(x, scope);
+  }
+
+  return result;
+}
+
 export function evaluateCallExpression(
   astNode: CallExpression,
   env: Environment
 ): RuntimeValue {
-  const args = astNode.arguments.map(x => evaluate(x, env));
+  const args = astNode.arguments.map((x) => evaluate(x, env));
   const fn = evaluate(astNode.caller, env);
-  
+
   if (fn.type === "native-function") {
     return fn.callMethod(args, env);
   }
 
   if (fn.type === "function" || fn.type === "anonymous-function") {
-    const scope = new Environment(fn.declarationEnvironments);
-
-    if (fn.parameters.length !== args.length) {
-      throw `Interpreter error: ${fn.type === "function" ? fn.name : "anonymous"} function expects ${fn.parameters.length} parameters, received ${args.length}`;
-    }
-    
-    fn.parameters.forEach((param, index) => {
-      scope.declareVariable(param, args[index], false);
-    });
-
-    let result: RuntimeValue = NULL();
-
-    for (const x of fn.body) {
-      result = evaluate(x, scope);
-    };
-
-    return result;
+    return runUserDefinedFunction(args, fn);
   }
 
-  throw `Interpreter error: Cannot call value that is not a function: ${JSON.stringify(fn)}`;
+  throw `Interpreter error: Cannot call value that is not a function: ${JSON.stringify(
+    fn
+  )}`;
 }
 
 export function evaluateAnonymousFunctionExpression(
@@ -242,24 +263,21 @@ export function evaluateAnonymousFunctionExpression(
     type: "anonymous-function",
     parameters: astNode.parameters,
     declarationEnvironments: env,
-    body: astNode.body
+    body: astNode.body,
   };
 
   return fn;
 }
 
-export function evaluateArray(
-  array: ArrayLiteral,
-  env: Environment
-) {
+export function evaluateArray(array: ArrayLiteral, env: Environment) {
   const values: RuntimeValue[] = [];
-  array.values.forEach(v => {
+  array.values.forEach((v) => {
     values.push(evaluate(v, env));
   });
 
   const result: ArrayValue = {
     type: "array",
-    values
+    values,
   };
 
   return result;

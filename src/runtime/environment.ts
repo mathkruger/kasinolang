@@ -1,3 +1,4 @@
+import { array } from "../lib/array";
 import { datetime } from "../lib/datetime";
 import { math } from "../lib/math";
 import { std } from "../lib/std";
@@ -13,6 +14,7 @@ export function createGlobalEnvironent() {
   env.declareVariable("std", std(), true);
   env.declareVariable("math", math(), true);
   env.declareVariable("datetime", datetime(), true);
+  env.declareVariable("array", array(), true);
 
   return env;
 }

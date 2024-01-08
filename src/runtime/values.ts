@@ -102,3 +102,7 @@ export function NATIVE_FUNCTION(call: FunctionCall): NativeFunctionValue {
 export function OBJECT(properties: Map<string, RuntimeValue>): ObjectValue {
   return { type: "object", properties };
 }
+
+export function ARRAY(values: RuntimeValue[]): ArrayValue {
+  return { type: "array", values };
+}
