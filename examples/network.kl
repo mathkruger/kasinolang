@@ -1,0 +1,5 @@
+fn callback(url, method) {
+  "<h1>Hey yaaaaaaa</h1>"
+}
+
+network.serve(6969, callback)

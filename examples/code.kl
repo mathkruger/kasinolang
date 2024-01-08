@@ -11,3 +11,6 @@ const numbers = [1, 2, 3, 4];
 const double = array.map(numbers, doubleNumber);
 std.print("Numbers after mapping:")
 array.foreach(double, printNumbers)
+
+const string = "heyaaaaaah";
+std.print(array.at(string, 2))

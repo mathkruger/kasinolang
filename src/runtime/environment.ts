@@ -1,6 +1,7 @@
 import { array } from "../lib/array";
 import { datetime } from "../lib/datetime";
 import { math } from "../lib/math";
+import { network } from "../lib/network";
 import { std } from "../lib/std";
 import { BOOLEAN, NULL, RuntimeValue } from "./values";
 
@@ -15,6 +16,7 @@ export function createGlobalEnvironent() {
   env.declareVariable("math", math(), true);
   env.declareVariable("datetime", datetime(), true);
   env.declareVariable("array", array(), true);
+  env.declareVariable("network", network(), true);
 
   return env;
 }
