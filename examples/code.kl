@@ -1,5 +1,7 @@
+import "functions.kl"
+
 fn doubleNumber(number, index) {
-  number * 2
+  operations.sum(number, number)
 }
 
 fn printNumbers(number, index) {
@@ -14,3 +16,5 @@ array.foreach(double, printNumbers)
 
 const string = "heyaaaaaah";
 std.print(array.at(string, 2))
+
+std.print(operations.info)
