@@ -1,11 +1,7 @@
-import { expect, describe, test, spyOn } from "bun:test";
+import { expect, describe, test } from "bun:test";
 import {
-  evaluateProgram,
-  evaluateVariableDeclaration,
-  evaluateFunctionDeclaration,
   evaluateIfDeclaration,
   evaluateWhileDeclaration,
-  evaluateImportDeclaration,
 } from "../../../src/runtime/evaluate/statements";
 import {
   FunctionDeclaration,
@@ -16,8 +12,8 @@ import {
   WhileDeclaration,
 } from "../../../src/frontend/ast";
 import { createGlobalEnvironent } from "../../../src/runtime/environment";
-import { getSpyEnvironment } from "../../helpers";
 import { BOOLEAN, NULL, NUMBER } from "../../../src/runtime/values";
+import { evaluate } from "../../../src/runtime/interpreter";
 
 describe("evaluateProgram", () => {
   test("should evaluate a program correctly", () => {
@@ -62,7 +58,7 @@ describe("evaluateProgram", () => {
 
     const realEnv = createGlobalEnvironent();
 
-    const result = evaluateProgram(program, realEnv);
+    const result = evaluate(program, realEnv);
 
     expect(result).toEqual({
       type: "function",
@@ -106,7 +102,7 @@ describe("evaluateVariableDeclaration", () => {
 
     const realEnv = createGlobalEnvironent();
 
-    const result = evaluateVariableDeclaration(declaration, realEnv);
+    const result = evaluate(declaration, realEnv);
     expect(result).toEqual(NUMBER(5));
   });
 });
@@ -140,7 +136,7 @@ describe("evaluateFunctionDeclaration", () => {
 
     const realEnv = createGlobalEnvironent();
 
-    const result = evaluateFunctionDeclaration(declaration, realEnv);
+    const result = evaluate(declaration, realEnv);
 
     expect(result).toEqual({
       type: "function",
@@ -194,7 +190,7 @@ describe("evaluateIfDeclaration", () => {
 
     const realEnv = createGlobalEnvironent();
 
-    const result = evaluateIfDeclaration(declaration, realEnv);
+    const result = evaluate(declaration, realEnv);
 
     expect(result).toEqual({ type: "number", value: 5 });
   });
@@ -266,7 +262,7 @@ describe("evaluateWhileDeclaration", () => {
     const realEnv = createGlobalEnvironent();
     realEnv.declareVariable("x", BOOLEAN(true), false);
 
-    const result = evaluateWhileDeclaration(declaration, realEnv);
+    const result = evaluate(declaration, realEnv);
 
     expect(result).toEqual(NUMBER(5));
   });
@@ -289,20 +285,18 @@ describe("evaluateWhileDeclaration", () => {
 });
 
 describe("evaluateImportDeclaration", () => {
-  // test("should evaluate an import declaration correctly", () => {
-  //   const declaration: ImportDeclaration = {
-  //     kind: "ImportDeclaration",
-  //     path: "path/to/file",
-  //   };
+  test("should evaluate an import declaration correctly", () => {
+    const declaration: ImportDeclaration = {
+      kind: "ImportDeclaration",
+      path: "./tests/mock/import.kl",
+    };
 
-  //   const realEnv = createGlobalEnvironent();
-  //   const declareSpy = spyOn(realEnv, "declareVariable");
+    const realEnv = createGlobalEnvironent();
 
-  //   const result = evaluateImportDeclaration(declaration, realEnv);
+    const result = evaluate(declaration, realEnv);
 
-  //   expect(declareSpy).toHaveBeenCalledTimes(1);
-  //   expect(result).toEqual(NULL());
-  // });
+    expect(result).toEqual(NUMBER(5));
+  });
 
   test("should throw an error when the file is not found", () => {
     const declaration: ImportDeclaration = {
@@ -312,7 +306,7 @@ describe("evaluateImportDeclaration", () => {
 
     const realEnv = createGlobalEnvironent();
 
-    expect(() => evaluateImportDeclaration(declaration, realEnv)).toThrow(
+    expect(() => evaluate(declaration, realEnv)).toThrow(
       "Interpreter error: nonexistent/file not found"
     );
   });
