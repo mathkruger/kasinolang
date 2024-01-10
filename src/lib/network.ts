@@ -13,7 +13,10 @@ import {
   NumberValue,
   ArrayValue,
   StringValue,
+  ARRAY,
+  NUMBER,
 } from "../runtime/values";
+import { printObject } from "./std";
 
 function serve(args: RuntimeValue[], scope: Environment) {
   const port = args[0] as NumberValue;
@@ -47,17 +50,21 @@ function serve(args: RuntimeValue[], scope: Environment) {
 
       switch (type.value) {
         default:
+          return new Response(data.value);
+
+        case 2:
           return new Response(data.value, {
             headers: {
               "Content-Type": "text/html",
             },
           });
 
-        case 2:
-          return new Response(data.value);
-
         case 3:
-          return new Response(JSON.parse(data.value));
+          return new Response(data.value, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
       }
     },
   });
@@ -76,10 +83,31 @@ function serve(args: RuntimeValue[], scope: Environment) {
   );
 }
 
+function html(args: RuntimeValue[], _: Environment): RuntimeValue {
+  const data = args[0] as StringValue;
+
+  return ARRAY([
+    data,
+    NUMBER(2)
+  ]);
+}
+
+function json(args: RuntimeValue[], scope: Environment): RuntimeValue {
+  const data = args[0] as ObjectValue;
+  const result = printObject(data.properties, scope, false);
+
+  return ARRAY([
+    STRING(JSON.stringify(result)),
+    NUMBER(3)
+  ]);
+}
+
 export function network(): ObjectValue {
   const props = new Map<string, NativeFunctionValue>();
 
   props.set("serve", NATIVE_FUNCTION(serve));
+  props.set("json", NATIVE_FUNCTION(json));
+  props.set("html", NATIVE_FUNCTION(html));
 
   return OBJECT(props);
 }

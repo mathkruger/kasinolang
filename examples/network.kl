@@ -2,10 +2,14 @@ fn callback(url, method) {
   std.print(url.pathname)
   std.print(method)
 
-  [
-    "<h1>Hello</h1>",
-    1
-  ]
+  if string.equals(url.pathname, "/json") {
+    network.json({
+      title: "Hello world",
+      description: "This is a page"
+    })
+  } else {
+    network.html("<h1>Hello, world!</h1><p>This is a page</p>")
+  }
 }
 
 const server = network.serve(6969, callback);

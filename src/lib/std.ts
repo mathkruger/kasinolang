@@ -42,7 +42,7 @@ export function getPrintText(arg: RuntimeValue, scope: Environment, asText = tru
   return textToPrint;
 }
 
-function printObject(
+export function printObject(
   props: Map<string, RuntimeValue>,
   scope: Environment,
   asString = true
