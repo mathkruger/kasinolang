@@ -14,8 +14,8 @@ function equals(args: RuntimeValue[], _: Environment) {
 
 function concat(args: RuntimeValue[], _: Environment) {
   const first = args[0];
-  const second = args[1];
-  const separator = args[2];
+  const separator = args[1];
+  const second = args[2];
 
   if (first.type !== "string" || second.type !== "string" || separator.type !== "string") {
     throw `string.concat: all arguments must be strings!`;

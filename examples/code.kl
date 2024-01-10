@@ -1,7 +1,7 @@
 import "functions.kl"
 
 fn doubleNumber(number, index) {
-  operations.sum(number, number)
+  operations.add(number, number)
 }
 
 fn printNumbers(number, index) {

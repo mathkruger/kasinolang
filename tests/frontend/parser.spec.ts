@@ -26,7 +26,7 @@ describe("parser", () => {
                 },
                 property: {
                   kind: "Identifier",
-                  symbol: "sum",
+                  symbol: "add",
                 },
               },
               arguments: [

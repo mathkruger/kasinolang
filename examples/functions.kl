@@ -11,5 +11,3 @@ const operations = {
   },
   native: std.print
 };
-
-const print = std.print;
