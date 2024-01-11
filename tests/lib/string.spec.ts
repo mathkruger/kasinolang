@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { createGlobalEnvironent } from "../../src/runtime/environment";
-import { BOOLEAN, BooleanValue, NULL, STRING, StringValue } from "../../src/runtime/values";
+import { ARRAY, ArrayValue, BOOLEAN, BooleanValue, NULL, STRING, StringValue } from "../../src/runtime/values";
 import { getNativeFunction } from "../helpers/get-native-function";
 
 describe("string", () => {
@@ -34,6 +34,25 @@ describe("string", () => {
       const func = getNativeFunction("string", "concat", env);
       expect(() => {
         func.callMethod([NULL(), NULL(), STRING("ez")], env)
+      }).toThrow();
+    });
+  });
+
+  describe("split", () => {
+    it("should return a array with the string splited", () => {
+      const func = getNativeFunction("string", "split", env);
+      const result = func.callMethod([STRING("ez,ez"), STRING(",")], env) as ArrayValue;
+  
+      expect(result).toEqual(ARRAY([
+        STRING("ez"),
+        STRING("ez")
+      ]));
+    });
+
+    it("should throw if one of the arguments is not a string", () => {
+      const func = getNativeFunction("string", "split", env);
+      expect(() => {
+        func.callMethod([STRING("ez,ez"), NULL()], env)
       }).toThrow();
     });
   });

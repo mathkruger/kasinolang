@@ -1,5 +1,5 @@
 import Environment from "../runtime/environment";
-import { ObjectValue, NativeFunctionValue, NATIVE_FUNCTION, OBJECT, RuntimeValue, STRING, StringValue, BOOLEAN } from "../runtime/values";
+import { ObjectValue, NativeFunctionValue, NATIVE_FUNCTION, OBJECT, RuntimeValue, STRING, StringValue, BOOLEAN, ARRAY } from "../runtime/values";
 
 function equals(args: RuntimeValue[], _: Environment) {
   const first = args[0];
@@ -24,11 +24,26 @@ function concat(args: RuntimeValue[], _: Environment) {
   return STRING(`${first.value}${separator.value}${second.value}`);
 }
 
+function split(args: RuntimeValue[], _: Environment) {
+  const value = args[0];
+  const separator = args[1];
+
+  if (value.type !== "string" || separator.type !== "string") {
+    throw `string.split: all arguments must be strings!`;
+  }
+
+  const values = value.value.split(separator.value).map(x => STRING(x));
+  return ARRAY([
+    ...values
+  ]);
+}
+
 export function string(): ObjectValue {
   const props = new Map<string, NativeFunctionValue>();
 
   props.set("equals", NATIVE_FUNCTION(equals));
   props.set("concat", NATIVE_FUNCTION(concat));
+  props.set("split", NATIVE_FUNCTION(split));
 
   return OBJECT(props);
 }

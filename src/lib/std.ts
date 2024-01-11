@@ -68,7 +68,7 @@ function printArray(
   let text = values.map(x => getPrintText(x, scope, false));
 
   if (asString) {
-    return `array: ${JSON.stringify(text, null, ` `.repeat(4))}`;
+    return `${JSON.stringify(text, null, ` `.repeat(4))}`;
   }
 
   return text;
@@ -103,22 +103,26 @@ function printFunctionStatement(
 
 function print(args: RuntimeValue[], scope: Environment) {
 
-  let textToPrint: string = "";
+  const textToPrint: string[] = [];
 
   args.forEach((arg) => {
-    textToPrint += " " + getPrintText(arg, scope);
+    textToPrint.push(getPrintText(arg, scope));
   });
 
-  console.log(textToPrint);
+  console.log(textToPrint.join(" "));
   return NULL();
 }
 
+export const readObject = {
+  prompt
+};
+
 function read(args: RuntimeValue[], _scope: Environment) {
-  if (args.length > 1 || args[0].type !== "string") {
+  if (args[0].type !== "string") {
     throw `Usage: read(string?)`;
   }
 
-  const value = prompt(args[0].value);
+  const value = readObject.prompt(args[0].value);
 
   if (value === null) {
     return NULL();
