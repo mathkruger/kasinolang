@@ -83,6 +83,15 @@ function serve(args: RuntimeValue[], scope: Environment) {
   );
 }
 
+function string(args: RuntimeValue[], _: Environment): RuntimeValue {
+  const data = args[0] as StringValue;
+
+  return ARRAY([
+    data,
+    NUMBER(1)
+  ]);
+}
+
 function html(args: RuntimeValue[], _: Environment): RuntimeValue {
   const data = args[0] as StringValue;
 
@@ -108,6 +117,7 @@ export function network(): ObjectValue {
   props.set("serve", NATIVE_FUNCTION(serve));
   props.set("json", NATIVE_FUNCTION(json));
   props.set("html", NATIVE_FUNCTION(html));
+  props.set("string", NATIVE_FUNCTION(string));
 
   return OBJECT(props);
 }
