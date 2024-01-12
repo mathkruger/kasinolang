@@ -96,8 +96,9 @@ describe("tokenize", () => {
   });
 
   test("should tokenize binary operators", () => {
-    const sourceCode = "+-/*%><&|";
+    const sourceCode = "==+-/*%><&|+=-=";
     const expectedTokens: Token[] = [
+      { value: "==", type: TokenType.BinaryOperator },
       { value: "+", type: TokenType.BinaryOperator },
       { value: "-", type: TokenType.BinaryOperator },
       { value: "/", type: TokenType.BinaryOperator },
@@ -107,6 +108,8 @@ describe("tokenize", () => {
       { value: "<", type: TokenType.BinaryOperator },
       { value: "&", type: TokenType.BinaryOperator },
       { value: "|", type: TokenType.BinaryOperator },
+      { value: "+=", type: TokenType.BinaryOperator },
+      { value: "-=", type: TokenType.BinaryOperator },
       { value: "EndOfFile", type: TokenType.EOF },
     ];
 

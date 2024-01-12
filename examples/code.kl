@@ -18,3 +18,13 @@ const string = "heyaaaaaah";
 std.print(array.at(string, 2))
 
 std.print(operations.info)
+
+let index = 0;
+
+while index < 3 {
+  std.print(index)
+}
+
+if index < 3 {
+  std.print("end")
+}

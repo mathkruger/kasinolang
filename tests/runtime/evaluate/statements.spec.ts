@@ -4,10 +4,12 @@ import {
   evaluateWhileDeclaration,
 } from "../../../src/runtime/evaluate/statements";
 import {
+  Expression,
   FunctionDeclaration,
   IfDeclaration,
   ImportDeclaration,
   Program,
+  Statement,
   VariableDeclaration,
   WhileDeclaration,
 } from "../../../src/frontend/ast";
@@ -222,6 +224,41 @@ describe("evaluateIfDeclaration", () => {
 
     expect(result).toEqual(NUMBER(10));
   });
+
+  test("should throw if expressionn does not returns a boolean", () => {
+    const declaration: IfDeclaration = {
+      kind: "IfDeclaration",
+      expression: {
+        kind: "StringLiteral",
+        value: "false",
+      },
+      thenStatement: [],
+      elseStatement: [],
+    };
+
+    const realEnv = createGlobalEnvironent();
+
+    expect(() => {
+      evaluateIfDeclaration(declaration, realEnv)
+    }).toThrow();
+  });
+
+  test("should return null if else block is empty", () => {
+    const declaration: IfDeclaration = {
+      kind: "IfDeclaration",
+      expression: {
+        kind: "Identifier",
+        symbol: "false",
+      },
+      thenStatement: [],
+      elseStatement: [],
+    };
+
+    const realEnv = createGlobalEnvironent();
+
+    const result = evaluateIfDeclaration(declaration, realEnv);
+    expect(result).toEqual(NULL());
+  });
 });
 
 describe("evaluateWhileDeclaration", () => {
@@ -309,5 +346,28 @@ describe("evaluateImportDeclaration", () => {
     expect(() => evaluate(declaration, realEnv)).toThrow(
       "Interpreter error: nonexistent/file not found"
     );
+  });
+});
+
+describe("interpreter", () => {
+  type NewAST = {
+    kind: "NewAST",
+    teste: Expression
+  };
+
+  test("should throw if ast is not recognized", () => {
+    const declaration: NewAST = {
+      kind: "NewAST",
+      teste: {
+        kind: "StringLiteral",
+        value: "Test"
+      }
+    };
+
+    const realEnv = createGlobalEnvironent();
+
+    expect(() => {
+      evaluate(declaration as unknown as Statement, realEnv);
+    }).toThrow();
   });
 });

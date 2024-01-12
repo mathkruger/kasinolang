@@ -20,7 +20,7 @@ import {
   ObjectLiteral,
   StringLiteral,
 } from "../../../src/frontend/ast";
-import { ARRAY, BOOLEAN, NUMBER, NumberValue, OBJECT, STRING } from "../../../src/runtime/values";
+import { ARRAY, BOOLEAN, NULL, NUMBER, NumberValue, OBJECT, STRING } from "../../../src/runtime/values";
 import { evaluate } from "../../../src/runtime/interpreter";
 
 describe("Interpreter", () => {
@@ -154,11 +154,26 @@ describe("Interpreter", () => {
         operator: "&",
       };
 
+      const binaryOperationOr: BinaryExpression = {
+        kind: "BinaryExpression",
+        left: {
+          kind: "Identifier",
+          symbol: "true",
+        },
+        right: {
+          kind: "Identifier",
+          symbol: "false",
+        },
+        operator: "|",
+      };
+
       const env = createGlobalEnvironent();
 
       const result = evaluateBinaryExpression(binaryOperation, env);
+      const resultOr = evaluateBinaryExpression(binaryOperationOr, env);
 
       expect(result).toEqual(BOOLEAN(false));
+      expect(resultOr).toEqual(BOOLEAN(true));
     });
 
     test("should throw error for invalid binary expression", () => {
@@ -175,6 +190,23 @@ describe("Interpreter", () => {
       const env = createGlobalEnvironent();
 
       expect(() => evaluateBinaryExpression(binaryOperation, env)).toThrow();
+    });
+
+    test("should return null on operations betweenn other types than number and boolean", () => {
+      const binaryOperation: BinaryExpression = {
+        kind: "BinaryExpression",
+        left: { kind: "StringLiteral", value: "30" },
+        right: {
+          kind: "StringLiteral",
+          value: "true",
+        },
+        operator: "+",
+      };
+
+      const env = createGlobalEnvironent();
+
+      const result = evaluateBinaryExpression(binaryOperation, env);
+      expect(result).toEqual(NULL());
     });
   });
 
