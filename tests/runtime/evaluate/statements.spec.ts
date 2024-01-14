@@ -352,13 +352,13 @@ describe("evaluateImportDeclaration", () => {
 describe("interpreter", () => {
   type NewAST = {
     kind: "NewAST",
-    teste: Expression
+    test: Expression
   };
 
   test("should throw if ast is not recognized", () => {
     const declaration: NewAST = {
       kind: "NewAST",
-      teste: {
+      test: {
         kind: "StringLiteral",
         value: "Test"
       }
