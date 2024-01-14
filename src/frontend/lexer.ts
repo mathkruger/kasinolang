@@ -147,7 +147,7 @@ export function tokenize(sourceCode: string): Token[] {
         } else if (isAlpha(code[0])) {
           let identifier = "";
 
-          while(code.length > 0 && isAlpha(code[0])) {
+          while(code.length > 0 && (isAlpha(code[0]) || isNumber(code[0]))) {
             identifier += code.shift();
           }
 

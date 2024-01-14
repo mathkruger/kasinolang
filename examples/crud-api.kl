@@ -9,34 +9,27 @@ fn renderSingleUser(user, index) {
 
 fn renderPage() {
   let html = string.concat("<h1>Users list</h1>", "", "<ul>");
-
   if array.len(users) > 0 {
     const lis = array.join(array.map(users, renderSingleUser), "");
     html = string.concat(html, "", lis)
   } else {
     html = string.concat(html, "", "<li>No users found</li>")
   }
-
   html = string.concat(html, "", "</ul>")
 
-  html = string.concat(html, "", "<hr />")
-
-  html = string.concat(html, "", "<h2>New User</h2>")
-  html = string.concat(html, "", "<form action='/' method='post'>")
-  html = string.concat(html, "", "<input placeholder='Name' name='name' /> <br/>")
-  html = string.concat(html, "", "<input placeholder='Age' name='age' /> <br/>")
-  html = string.concat(html, "", "<button type='submit'>Create new User</button>")
+  html = string.concat(html, "<hr />", "
+    <h2>New User</h2>
+    <form action='/' method='post'>
+    <input placeholder='Name' name='name' /> <br/>
+    <input placeholder='Age' name='age' /> <br/>
+    <button type='submit'>Create new User</button>
+  ")
 
   network.html(html)
 }
 
 fn addUser(user) {
-  const newUser = {
-    name: user.name,
-    age: user.age
-  };
-
-  array.push(users, newUser)
+  array.push(users, user)
 }
 
 fn callback(url, method) {
@@ -50,7 +43,10 @@ fn callback(url, method) {
       }
     }
   } else {
-    network.html("<h1>404</h1><p>Page not found</p>")
+    network.html("
+      <h1>404</h1>
+      <p>Page not found</p>
+    ")
   }
 }
 
