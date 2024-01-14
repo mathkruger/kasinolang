@@ -10,6 +10,7 @@ import {
   STRING,
   NULL,
   ARRAY,
+  StringValue,
 } from "../runtime/values";
 
 function len(args: RuntimeValue[], _scope: Environment) {
@@ -88,6 +89,51 @@ function foreach(args: RuntimeValue[], _scope: Environment) {
   return NULL();
 }
 
+function push(args: RuntimeValue[], _scope: Environment) {
+  const object = args[0];
+  const value = args[1];
+
+  if (object.type !== "array") {
+    throw `array.push: You can only push to arrays`;
+  }
+
+  object.values.push(value);
+
+  return object;
+}
+
+function pop(args: RuntimeValue[], _scope: Environment) {
+  const object = args[0];
+
+  if (object.type !== "array") {
+    throw `array.pop: You can only pop from arrays`;
+  }
+
+  return object.values.pop() || ARRAY([]);
+}
+
+function join(args: RuntimeValue[], _scope: Environment) {
+  const object = args[0];
+  const separator = args[1];
+
+  if (object.type !== "array") {
+    throw `array.join: You can only join array items`;
+  }
+
+  if (separator.type !== "string") {
+    throw `array.join: the separator must be a string`;
+  }
+
+  if (!object.values.every(x => x.type === "string")) {
+    throw `array.join: you can only join array of strings!`;
+  }
+
+  const result = STRING(object.values.map(x => {
+    return (x as StringValue).value;
+  }).join(separator.value));
+  return result;
+}
+
 export function array(): ObjectValue {
   const props = new Map<string, NativeFunctionValue>();
 
@@ -95,6 +141,9 @@ export function array(): ObjectValue {
   props.set("at", NATIVE_FUNCTION(at));
   props.set("map", NATIVE_FUNCTION(map));
   props.set("foreach", NATIVE_FUNCTION(foreach));
+  props.set("push", NATIVE_FUNCTION(push));
+  props.set("pop", NATIVE_FUNCTION(pop));
+  props.set("join", NATIVE_FUNCTION(join));
 
   return OBJECT(props);
 }

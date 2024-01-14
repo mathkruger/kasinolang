@@ -25,17 +25,27 @@ function serve(args: RuntimeValue[], scope: Environment) {
   const server = Bun.serve({
     port: port.value,
     async fetch(req) {
-      const { method } = req;
+      const { method, bodyUsed } = req;
       const url = new URL(req.url);
       const searchParams = new Map<string, RuntimeValue>();
+      const bodyParams = new Map<string, RuntimeValue>();
 
       for (const s of url.searchParams) {
         searchParams.set(s[0], STRING(s[1]));
       }
 
+      if (method !== "GET") {
+        const formData = await req.formData();
+  
+        for(const param of formData.entries()) {
+          bodyParams.set(param[0], STRING(param[1] as string));
+        }
+      }
+
       const urlObj = OBJECT(
         new Map<string, RuntimeValue>([
           ["queryParams", OBJECT(searchParams)],
+          ["body", OBJECT(bodyParams)],
           ["pathname", STRING(url.pathname)],
         ])
       );

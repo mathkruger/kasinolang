@@ -1,0 +1,62 @@
+const users = [];
+
+fn renderSingleUser(user, index) {
+  let html = "<li>";
+  html = string.concat(html, "", user.name)
+  html = string.concat(html, " - ", user.age)
+  html = string.concat(html, "", "</li>")
+
+  html
+}
+
+fn renderPage() {
+  let html = "<h1>Users list</h1>";
+  html = string.concat(html, "", "<ul>")
+
+  if array.len(users) > 0 {
+    const lis = array.join(array.map(users, renderSingleUser), "");
+    html = string.concat(html, "", lis)
+  } else {
+    html = string.concat(html, "", "<li>No users found</li>")
+  }
+
+  html = string.concat(html, "", "</ul>")
+
+  html = string.concat(html, "", "<hr />")
+
+  html = string.concat(html, "", "<h2>New User</h2>")
+  html = string.concat(html, "", "<form action='/' method='post'>")
+  html = string.concat(html, "", "<input placeholder='Name' name='name' />")
+  html = string.concat(html, "", "<input placeholder='Age' name='age' />")
+  html = string.concat(html, "", "<button type='submit'>Create new User</button>")
+
+  network.html(html)
+}
+
+fn addUser(user) {
+  const newUser = {
+    name: user.name,
+    age: user.age
+  };
+
+  array.push(users, newUser)
+}
+
+fn callback(url, method) {
+  if string.equals(url.pathname, "/") {
+    if string.equals(method, "GET") {
+      renderPage()
+    } else {
+      if string.equals(method, "POST") {
+        addUser(url.body)
+        renderPage()
+      }
+    }
+  } else {
+    network.html("<h1>404</h1><p>Page not found</p>")
+  }
+}
+
+const server = network.serve(6969, callback);
+
+std.print("server running at port", 6969)
