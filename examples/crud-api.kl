@@ -1,17 +1,14 @@
 const users = [];
 
 fn renderSingleUser(user, index) {
-  let html = "<li>";
-  html = string.concat(html, "", user.name)
-  html = string.concat(html, " - ", user.age)
-  html = string.concat(html, "", "</li>")
+  const userText = string.concat(user.name, " - ", user.age);
+  const html = string.concat("<li>", userText, "</li>");
 
   html
 }
 
 fn renderPage() {
-  let html = "<h1>Users list</h1>";
-  html = string.concat(html, "", "<ul>")
+  let html = string.concat("<h1>Users list</h1>", "", "<ul>");
 
   if array.len(users) > 0 {
     const lis = array.join(array.map(users, renderSingleUser), "");
@@ -26,8 +23,8 @@ fn renderPage() {
 
   html = string.concat(html, "", "<h2>New User</h2>")
   html = string.concat(html, "", "<form action='/' method='post'>")
-  html = string.concat(html, "", "<input placeholder='Name' name='name' />")
-  html = string.concat(html, "", "<input placeholder='Age' name='age' />")
+  html = string.concat(html, "", "<input placeholder='Name' name='name' /> <br/>")
+  html = string.concat(html, "", "<input placeholder='Age' name='age' /> <br/>")
   html = string.concat(html, "", "<button type='submit'>Create new User</button>")
 
   network.html(html)
