@@ -20,8 +20,8 @@ function len(args: RuntimeValue[], _scope: Environment) {
     object.type === "array"
       ? object.values.length
       : object.type === "string"
-      ? object.value.length
-      : undefined;
+        ? object.value.length
+        : undefined;
 
   return NUMBER(value);
 }
@@ -38,8 +38,8 @@ function at(args: RuntimeValue[], _scope: Environment) {
     object.type === "array"
       ? object.values
       : object.type === "string"
-      ? object.value
-      : undefined;
+        ? object.value
+        : undefined;
 
   if (values === undefined) {
     throw `array.at: cannot access index from ${index.type}`;
