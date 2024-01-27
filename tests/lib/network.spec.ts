@@ -4,16 +4,12 @@ import {
   ARRAY,
   ArrayValue,
   FunctionValue,
-  NULL,
   NUMBER,
   NativeFunctionValue,
-  NullValue,
-  NumberValue,
   OBJECT,
   ObjectValue,
   RuntimeValue,
   STRING,
-  StringValue,
 } from "../../src/runtime/values";
 import { getNativeFunction } from "../helpers/get-native-function";
 
@@ -98,13 +94,12 @@ describe("network", () => {
         env
       ) as ObjectValue;
       const serverResult = await (await fetch("http://localhost:6969")).text();
-      (result.properties.get("stop") as NativeFunctionValue).callMethod(
-        [],
-        env
-      );
 
       expect(serverResult).toEqual("Hello");
       expect(result.properties.get("hostname")).toEqual(STRING("localhost"));
+
+      const stopServiceFunction = result.properties.get("stop") as NativeFunctionValue;
+      stopServiceFunction.callMethod([], env);
     });
 
     it("should serve a html", async () => {
@@ -138,19 +133,22 @@ describe("network", () => {
         ],
       };
       const result = func.callMethod(
-        [NUMBER(6970), functionValue],
+        [NUMBER(6969), functionValue],
         env
       ) as ObjectValue;
-      const serverResult = await (await fetch("http://localhost:6970")).text();
+      const serverResult = await (await fetch("http://localhost:6969")).text();
       (result.properties.get("stop") as NativeFunctionValue).callMethod(
         [],
         env
       );
 
       expect(serverResult).toEqual("<h1>Hello, world!</h1><p>This is a page</p>");
+
+      const stopServiceFunction = result.properties.get("stop") as NativeFunctionValue;
+      stopServiceFunction.callMethod([], env);
     });
 
-    it("should serve a json", async () => {
+    it("should serve a json and handle a post request correctly", async () => {
       const func = getNativeFunction("network", "serve", env);
       const functionValue: FunctionValue = {
         type: "function",
@@ -198,10 +196,18 @@ describe("network", () => {
         ],
       };
       const result = func.callMethod(
-        [NUMBER(6971), functionValue],
+        [NUMBER(6969), functionValue],
         env
       ) as ObjectValue;
-      const serverResult = await (await fetch("http://localhost:6971")).text();
+
+      const mockBody = new FormData();
+      mockBody.set("foo", "bar");
+
+      const serverResult = await (await fetch("http://localhost:6969?id=1", {
+        method: "POST",
+        body: mockBody
+      })).text();
+
       (result.properties.get("stop") as NativeFunctionValue).callMethod(
         [],
         env
@@ -211,6 +217,9 @@ describe("network", () => {
         foo: "Test",
         bar: "Test2"
       }));
+
+      const stopServiceFunction = result.properties.get("stop") as NativeFunctionValue;
+      stopServiceFunction.callMethod([], env);
     });
   });
 });

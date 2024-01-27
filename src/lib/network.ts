@@ -25,7 +25,7 @@ function serve(args: RuntimeValue[], scope: Environment) {
   const server = Bun.serve({
     port: port.value,
     async fetch(req) {
-      const { method, bodyUsed } = req;
+      const { method } = req;
       const url = new URL(req.url);
       const searchParams = new Map<string, RuntimeValue>();
       const bodyParams = new Map<string, RuntimeValue>();
@@ -36,8 +36,8 @@ function serve(args: RuntimeValue[], scope: Environment) {
 
       if (method !== "GET") {
         const formData = await req.formData();
-  
-        for(const param of formData.entries()) {
+
+        for (const param of formData.entries()) {
           bodyParams.set(param[0], STRING(param[1] as string));
         }
       }
@@ -84,7 +84,7 @@ function serve(args: RuntimeValue[], scope: Environment) {
       [
         "stop",
         NATIVE_FUNCTION((_a, _v) => {
-          server.stop();
+          server.stop(true);
           return NULL();
         }),
       ],
