@@ -8,7 +8,7 @@ import {
   Identifier,
   MemberExpression,
   ObjectLiteral,
-} from "../../frontend/ast";
+} from "../../../frontend/ast";
 import Environment from "../environment";
 import { evaluate } from "../interpreter";
 import {
@@ -178,8 +178,7 @@ export function evaluateMemberExpression(
   }
 
   if (!objectValue.properties.has(propertySymbol)) {
-    throw `Interpreter error: property ${propertySymbol} does not exists on ${
-      (member.object as Identifier).symbol
+    throw `Interpreter error: property ${propertySymbol} does not exists on ${(member.object as Identifier).symbol
     }!`;
   }
 
@@ -215,10 +214,8 @@ export function runUserDefinedFunction(
   const scope = new Environment(fn.declarationEnvironments);
 
   if (fn.parameters.length !== args.length) {
-    throw `Interpreter error: ${
-      fn.type === "function" ? fn.name : "anonymous"
-    } function expects ${fn.parameters.length} parameters, received ${
-      args.length
+    throw `Interpreter error: ${fn.type === "function" ? fn.name : "anonymous"
+    } function expects ${fn.parameters.length} parameters, received ${args.length
     }`;
   }
 

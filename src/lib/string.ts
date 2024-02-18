@@ -1,5 +1,5 @@
-import Environment from "../runtime/environment";
-import { ObjectValue, NativeFunctionValue, NATIVE_FUNCTION, OBJECT, RuntimeValue, STRING, StringValue, BOOLEAN, ARRAY } from "../runtime/values";
+import Environment from "../runtime/interpreter/environment";
+import { ObjectValue, NativeFunctionValue, NATIVE_FUNCTION, OBJECT, RuntimeValue, STRING, StringValue, BOOLEAN, ARRAY } from "../runtime/interpreter/values";
 
 function equals(args: RuntimeValue[], _: Environment) {
   const first = args[0];

@@ -1,4 +1,4 @@
-import Environment from "../runtime/environment";
+import Environment from "../runtime/interpreter/environment";
 import {
   NATIVE_FUNCTION,
   NUMBER,
@@ -6,7 +6,7 @@ import {
   OBJECT,
   ObjectValue,
   RuntimeValue,
-} from "../runtime/values";
+} from "../runtime/interpreter/values";
 
 function powerFunction(x: RuntimeValue[], _: Environment) {
   if (x.length !== 2) {

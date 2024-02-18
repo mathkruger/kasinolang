@@ -1,4 +1,4 @@
-import { Statement } from "../frontend/ast";
+import { Statement } from "../../frontend/ast";
 import Environment from "./environment";
 import {
   evaluateIdentifier,

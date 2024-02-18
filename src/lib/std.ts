@@ -1,4 +1,4 @@
-import Environment from "../runtime/environment";
+import Environment from "../runtime/interpreter/environment";
 import {
   AnonymousFunctionValue,
   BOOLEAN,
@@ -11,7 +11,7 @@ import {
   ObjectValue,
   RuntimeValue,
   STRING,
-} from "../runtime/values";
+} from "../runtime/interpreter/values";
 
 export function getPrintText(arg: RuntimeValue, scope: Environment, asText = true) {
   let textToPrint: string = "";

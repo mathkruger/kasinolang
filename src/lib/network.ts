@@ -1,5 +1,5 @@
-import Environment from "../runtime/environment";
-import { runUserDefinedFunction } from "../runtime/evaluate/expressions";
+import Environment from "../runtime/interpreter/environment";
+import { runUserDefinedFunction } from "../runtime/interpreter/evaluate/expressions";
 import {
   ObjectValue,
   NativeFunctionValue,
@@ -15,7 +15,7 @@ import {
   StringValue,
   ARRAY,
   NUMBER,
-} from "../runtime/values";
+} from "../runtime/interpreter/values";
 import { printObject } from "./std";
 
 function serve(args: RuntimeValue[], scope: Environment) {

@@ -1,5 +1,5 @@
-import Environment from "../runtime/environment";
-import { runUserDefinedFunction } from "../runtime/evaluate/expressions";
+import Environment from "../runtime/interpreter/environment";
+import { runUserDefinedFunction } from "../runtime/interpreter/evaluate/expressions";
 import {
   RuntimeValue,
   NUMBER,
@@ -11,7 +11,7 @@ import {
   NULL,
   ARRAY,
   StringValue,
-} from "../runtime/values";
+} from "../runtime/interpreter/values";
 
 function len(args: RuntimeValue[], _scope: Environment) {
   const object = args[0];

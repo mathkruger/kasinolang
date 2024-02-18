@@ -1,4 +1,4 @@
-import Environment from "../runtime/environment";
+import Environment from "../runtime/interpreter/environment";
 import {
   ObjectValue,
   NativeFunctionValue,
@@ -6,7 +6,7 @@ import {
   OBJECT,
   RuntimeValue,
   BOOLEAN,
-} from "../runtime/values";
+} from "../runtime/interpreter/values";
 
 function isTrue(args: RuntimeValue[], _: Environment) {
   const value = args[0];

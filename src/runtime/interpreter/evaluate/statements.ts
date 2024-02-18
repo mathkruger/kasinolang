@@ -1,5 +1,5 @@
 import { FunctionDeclaration, IfDeclaration, ImportDeclaration, Program, Statement, VariableDeclaration, WhileDeclaration } from "../../frontend/ast";
-import Parser from "../../frontend/parser";
+import Parser from "../../../frontend/parser";
 import Environment from "../environment";
 import { evaluate } from "../interpreter";
 import { RuntimeValue, NULL, FunctionValue, BooleanValue } from "../values";
@@ -96,11 +96,10 @@ export function evaluateImportDeclaration(
 
 function evaluateBlock(statements: Statement[], env: Environment) {
   let last: RuntimeValue = NULL();
-    
+
   statements.forEach(statement => {
     last = evaluate(statement, env);
   });
 
   return last;
 }
-

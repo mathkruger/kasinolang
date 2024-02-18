@@ -1,9 +1,9 @@
-import { array } from "../lib/array";
-import { datetime } from "../lib/datetime";
-import { math } from "../lib/math";
-import { network } from "../lib/network";
-import { std } from "../lib/std";
-import { string } from "../lib/string";
+import { array } from "../../lib/array";
+import { datetime } from "../../lib/datetime";
+import { math } from "../../lib/math";
+import { network } from "../../lib/network";
+import { std } from "../../lib/std";
+import { string } from "../../lib/string";
 import { BOOLEAN, NULL, RuntimeValue } from "./values";
 
 export function createGlobalEnvironent() {
@@ -35,12 +35,12 @@ export default class Environment {
   }
 
   public declareVariable(variableName: string, value: RuntimeValue, constant: boolean): RuntimeValue {
-    if(this.variables.has(variableName)) {
+    if (this.variables.has(variableName)) {
       throw `Environment error: Cannot declare ${variableName}, its already defined.`;
     }
 
     this.variables.set(variableName, value);
-    
+
     if (constant) {
       this.constants.add(variableName);
     }
@@ -54,7 +54,7 @@ export default class Environment {
     if (env.constants.has(variableName)) {
       throw `Environment error: Cannot reassign to ${variableName} as it was declared as a constant!`;
     }
-  
+
     env.variables.set(variableName, value);
     return value;
   }
