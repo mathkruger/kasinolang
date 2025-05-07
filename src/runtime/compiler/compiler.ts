@@ -1,18 +1,24 @@
 import { Statement } from "../../frontend/ast";
 import { compileNumericLiteral, compileStringLiteral } from "./generators/expressions";
 import { compileProgram, compileVariableDeclaration } from "./generators/statements";
+import { CompilerResult } from "./types/compiler-result";
+import { VariableValue } from "./types/variable-value";
 
-export function compile(astNode: Statement) {
+export function compile(astNode: Statement, variableValues: VariableValue[]): CompilerResult {
   let code: string = ``;
 
   switch (astNode.kind) {
     // Statements
     case "Program":
-      code += compileProgram(astNode);
+      var result = compileProgram(astNode, variableValues);
+      code += result.code;
+      variableValues = result.variableValues;
       break;
 
     case "VariableDeclaration":
-      code += compileVariableDeclaration(astNode);
+      var result = compileVariableDeclaration(astNode, variableValues);
+      code += result.code;
+      variableValues = result.variableValues;
       break;
 
     case "FunctionDeclaration":
@@ -56,5 +62,5 @@ export function compile(astNode: Statement) {
       )}`;
   }
 
-  return code;
+  return { code, variableValues };
 }
